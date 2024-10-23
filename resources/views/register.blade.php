@@ -78,6 +78,7 @@
             
               {{-- Password --}}
               <div class="form-group position-relative has-icon-left mb-4">
+              s
                 <input
                   type="password"
                   class="form-control form-control-xl @error('password') is-invalid @enderror"

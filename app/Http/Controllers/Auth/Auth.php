@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class Auth extends Controller
@@ -77,5 +78,22 @@ class Auth extends Controller
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'password.min' => 'Password minimal harus 8 karakter.',
         ]);
+
+        $storeUser = new Users();
+        $storeUser->uuid = Str::uuid();
+        $storeUser->nama = $request->nama;
+        $storeUser->email = $request->email;
+        $storeUser->password = Hash::make($request->password);
+        $storeUser->foto = 'default.png';
+        $storeUser->role = 'Karyawan';
+        $storeUser->is_verified = '0';
+
+        $result = $storeUser->save();
+
+        if (!$result) {
+            return back()->with('error', 'Gagal')->withInput();
+        }
+
+        return redirect()->route('login')->with('success', 'Berhasil menambahkan data');
     }
 }

@@ -17,15 +17,17 @@ class DataRole extends Seeder
     public function run(): void
     {
         Role::create(['role' => 'superadmin']);
-        Role::create(['role' => 'admin']);
-        Role::create(['role' => 'karyawan']);
+        Role::create(['role' => 'Sekretaris']);
+        Role::create(['role' => 'Manager']);
+        Role::create(['role' => 'Asisten Manager']);
+        Role::create(['role' => 'Karyawan']);
 
-        Users::create([
-            'uuid' => Str::uuid(),
-            'nama' => 'Super Admin',
-            'email' => 'superadmin123@email.com',
-            'password' => Hash::make('Adm1nPLN'),
-            'role' => 'superadmin',
-        ]);
+        // Users::create([
+        //     'uuid' => Str::uuid(),
+        //     'nama' => 'Super Admin',
+        //     'email' => 'superadmin123@email.com',
+        //     'password' => Hash::make('Adm1nPLN'),
+        //     'role' => 'superadmin',
+        // ]);
     }
 }

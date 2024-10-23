@@ -33,7 +33,7 @@
             </div>
             <h1 class="auth-title">Registrasi.</h1>
             <p class="auth-subtitle mb-5">
-              Buat akun anda di sini, <br> Mohon tunggu admin mengkorfimasi akun anda setelah dibuat.
+              Buat akun anda di sini, <br> Mohon tunggu hingga admin mengkorfimasi akun anda, setelah akun dibuat.
             </p>
 
             <form action="{{ route('doRegist') }}" method="POST" enctype="multipart/form-data">
@@ -78,7 +78,6 @@
             
               {{-- Password --}}
               <div class="form-group position-relative has-icon-left mb-4">
-              s
                 <input
                   type="password"
                   class="form-control form-control-xl @error('password') is-invalid @enderror"

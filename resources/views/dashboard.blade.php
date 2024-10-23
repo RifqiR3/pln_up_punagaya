@@ -29,6 +29,16 @@
       </div>
     </div>
   </div>
-
-  
 </main>
+
+<script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
+<script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>
+@if (session()->has('success'))
+  <script>
+    Swal.fire({
+      title: "Success",
+      text: "{{session()->get('success')}}",
+      icon: "success"
+    });
+  </script>
+@endif

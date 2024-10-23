@@ -90,8 +90,8 @@
     </div>
   </body>
 
-  <script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
-  <script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>>
+  <script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
+  <script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>
 
   @if (session()->has('error'))
     <script>

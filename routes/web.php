@@ -19,4 +19,5 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(fu
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
     Route::get('/profile', [Dashboard::class, 'profile'])->name('profile');
     Route::get('/konfirmasi', [Dashboard::class, 'konfirmasiAkun'])->name('konfirmasiAkun');
+    Route::post('/doKonfirmasiAkun', [Dashboard::class, 'doKonfirmasiAkun'])->name('doKonfirmasiAkun');
 });

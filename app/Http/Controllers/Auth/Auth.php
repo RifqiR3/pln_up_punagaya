@@ -32,7 +32,11 @@ class Auth extends Controller
             $dataUser = Users::where('email', $request->input('email'))->first();
 
             if (!$dataUser) {
-                return back()->with('error', 'Akun tidak ditemukan. Mohon kontak admin.')->withInput();
+                return back()->with('error', 'Akun tidak ditemukan. Silahkan daftar.')->withInput();
+            }
+
+            if (!$dataUser->is_verified) {
+                return back()->with('error', 'Akun belum dikonfirmasi. Mohon kontak admin.')->withInput();
             }
 
             $passwordVerify = Hash::check($request->input('password'), $dataUser->password);
@@ -67,7 +71,7 @@ class Auth extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:100',
-            'email' => 'required|string|unique:data_user,email|max:100',
+            'email' => 'required|string|unique:data_user,email|max:100|email',
             'password' => 'required|min:8|confirmed'
         ], [
             'nama.required' => 'Nama wajib diisi.',
@@ -79,21 +83,25 @@ class Auth extends Controller
             'password.min' => 'Password minimal harus 8 karakter.',
         ]);
 
-        $storeUser = new Users();
-        $storeUser->uuid = Str::uuid();
-        $storeUser->nama = $request->nama;
-        $storeUser->email = $request->email;
-        $storeUser->password = Hash::make($request->password);
-        $storeUser->foto = 'default.png';
-        $storeUser->role = 'Karyawan';
-        $storeUser->is_verified = '0';
+        try {
+            $storeUser = new Users();
+            $storeUser->uuid = Str::uuid();
+            $storeUser->nama = $request->nama;
+            $storeUser->email = $request->email;
+            $storeUser->password = Hash::make($request->password);
+            $storeUser->foto = 'default.png';
+            $storeUser->role = 'Karyawan';
+            $storeUser->is_verified = '0';
 
-        $result = $storeUser->save();
+            $result = $storeUser->save();
 
-        if (!$result) {
-            return back()->with('error', 'Gagal')->withInput();
+            if (!$result) {
+                return back()->with('error', 'Gagal')->withInput();
+            }
+
+            return redirect()->route('login')->with('success', 'Berhasil membuat akun. Harap tunggu hingga admin mengkonfirmasi akun anda.');
+        } catch (\Exception  $e) {
+            return back()->with('error', 'Gagal: ' . $e->getMessage())->withInput();
         }
-
-        return redirect()->route('login')->with('success', 'Berhasil menambahkan data');
     }
 }

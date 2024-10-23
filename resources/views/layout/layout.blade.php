@@ -3,11 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Mazer Admin Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $title }}</title>
 
     <link
       rel="shortcut icon"
-      href="{{ url('/assets/compiled/svg/favicon.svg') }}"
+      href="{{ url('assets/compiled/svg/favicon.svg') }}"
       type="image/x-icon"
     />
     <link
@@ -73,25 +74,14 @@
         {{-- Content Here --}}
         @yield('content')
     </div>
-    <script src="assets/static/js/components/dark.js"></script>
-    <script src="assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="{{ url('/assets/static/js/components/dark.js') }}"></script>
+    <script src="{{ url('/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
-    <script src="assets/compiled/js/app.js"></script>
+    <script src="{{ url('/assets/compiled/js/app.js') }}"></script>
 
     <!-- Need: Apexcharts -->
-    <script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
-    <script src="assets/static/js/pages/dashboard.js"></script>
-    <script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
-    <script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>>
-
-    @if (session()->has('success'))
-    <script>
-        Swal.fire({
-            title: "Success",
-            text: "{{session()->get('success')}}",
-            icon: "success"
-        });
-    </script>
-    @endif
+    <script src="{{ url('/assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ url('/assets/static/js/pages/dashboard.js') }}"></script>
+    
   </body>
 </html>

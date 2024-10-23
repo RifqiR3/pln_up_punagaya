@@ -16,6 +16,8 @@
       type="image/png"
     />
 
+    <link rel="stylesheet" href="{{ url('/assets/extensions/simple-datatables/style.css') }}">
+    <link rel="stylesheet" href="{{ url('/assets/compiled/css/table-datatable.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/extensions/filepond/filepond.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/extensions/toastify-js/src/toastify.css') }}">
@@ -44,35 +46,24 @@
               </div>
             </div>
           </div>
+          @php
+            use App\Helpers\NavigationHelper;
+            $menuItems = NavigationHelper::getMenuItems();
+          @endphp
           <div class="sidebar-menu">
             <ul class="menu">
-              <li class="sidebar-title">Menu</li>
-              <li class="sidebar-item active">
-                <a href="{{ route('dashboard.index') }}" class="sidebar-link">
-                  <i class="bi bi-grid-fill"></i>
-                  <span>Dashboard</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a href="{{ route('dashboard.submit') }}" class="sidebar-link">
-                  <i class="bi bi-file-earmark-medical-fill"></i>
-                  <span>Submit SPPD</span>
-                </a>
-              </li>
-
-              <li class="sidebar-title">Akun</li>
-              <li class="sidebar-item">
-                <a href="{{ route('dashboard.index') }}" class="sidebar-link">
-                  <i class="bi bi-person"></i>
-                  <span>Profile</span>
-                </a>
-              </li>
-              <li class="sidebar-item">
-                <a href="{{ route('dashboard.submit') }}" class="sidebar-link">
-                  <i class="bi bi-box-arrow-left"></i>
-                  <span>Logout</span>
-                </a>
-              </li>
+              @foreach($menuItems as $item)
+                @if($item['type'] === 'title')
+                    <li class="sidebar-title">{{ $item['title'] }}</li>
+                @else
+                    <li class="sidebar-item {{ NavigationHelper::isActive($item['route']) }}">
+                        <a href="{{ route($item['route']) }}" class="sidebar-link">
+                            <i class="{{ $item['icon'] }}"></i>
+                            <span>{{ $item['title'] }}</span>
+                        </a>
+                    </li>
+                @endif
+              @endforeach
             </ul>
 
           </div>

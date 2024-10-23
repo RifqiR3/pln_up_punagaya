@@ -15,4 +15,19 @@ class Dashboard extends Controller
     {
         return view('submit');
     }
+
+    public function status()
+    {
+        return view('statusUser');
+    }
+
+    public function profile()
+    {
+        return view('profile');
+    }
+
+    public function konfirmasiAkun()
+    {
+        return view('konfirmasiAkun');
+    }
 }

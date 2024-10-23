@@ -38,13 +38,14 @@
 
             <form action="{{ route('doRegist') }}" method="POST" enctype="multipart/form-data">
               @csrf
-                {{-- Nama --}}
+              {{-- Nama --}}
               <div class="form-group position-relative has-icon-left mb-4">
                 <input
                   type="text"
-                  class="form-control form-control-xl"
+                  class="form-control form-control-xl @error('nama') is-invalid @enderror"
                   placeholder="Nama"
                   name="nama"
+                  value="{{ old('nama') }}"
                 />
                 <div class="form-control-icon">
                   <i class="bi bi-person"></i>
@@ -55,13 +56,15 @@
                   </div>
                 @enderror
               </div>
+            
               {{-- Email --}}
               <div class="form-group position-relative has-icon-left mb-4">
                 <input
                   type="email"
-                  class="form-control form-control-xl"
+                  class="form-control form-control-xl @error('email') is-invalid @enderror"
                   placeholder="Email"
                   name="email"
+                  value="{{ old('email') }}"
                 />
                 <div class="form-control-icon">
                   <i class="bi bi-envelope"></i>
@@ -72,13 +75,15 @@
                   </div>
                 @enderror
               </div>
+            
               {{-- Password --}}
               <div class="form-group position-relative has-icon-left mb-4">
                 <input
                   type="password"
-                  class="form-control form-control-xl"
+                  class="form-control form-control-xl @error('password') is-invalid @enderror"
                   placeholder="Password"
                   name="password"
+                  value="{{ old('password') }}"
                 />
                 <div class="form-control-icon">
                   <i class="bi bi-shield-lock"></i>
@@ -89,11 +94,12 @@
                   </div>
                 @enderror
               </div>
-              {{-- Konfirasmi Password --}}
+            
+              {{-- Konfirmasi Password --}}
               <div class="form-group position-relative has-icon-left mb-4">
                 <input
                   type="password"
-                  class="form-control form-control-xl"
+                  class="form-control form-control-xl @error('password_confirmation') is-invalid @enderror"
                   placeholder="Konfirmasi Password"
                   name="password_confirmation"
                 />
@@ -106,10 +112,10 @@
                   </div>
                 @enderror
               </div>
-              <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">
-                Daftar
-              </button>
+            
+              <button class="btn btn-primary btn-block btn-lg" type="submit">Daftar</button>
             </form>
+            
             <div class="text-center mt-5 text-lg fs-4">
               <p class="text-gray-600">
                 Sudah punya akun?

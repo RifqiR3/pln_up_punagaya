@@ -64,16 +64,18 @@ class Auth extends Controller
 
     public function doRegist(Request $request)
     {
-        try {
-            $request->validate([
-                'nama' => 'required|string|max:100',
-                'email' => 'require|string|max:100',
-                'password' => 'required|min:6|confirmed'
-            ]);
-        } catch (ValidationException $e) {
-            return back()->with('error', 'Terdapat kesalahan pada input form')->withInput();
-        } catch (\Exception $err) {
-            return back()->with('error', 'Terdapat kesalahan ketika melakukan update password')->withInput();
-        }
+        $request->validate([
+            'nama' => 'required|string|max:100',
+            'email' => 'required|string|unique:data_user,email|max:100',
+            'password' => 'required|min:8|confirmed'
+        ], [
+            'nama.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Password wajib diisi.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal harus 8 karakter.',
+        ]);
     }
 }

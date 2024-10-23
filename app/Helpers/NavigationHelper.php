@@ -56,7 +56,7 @@ class NavigationHelper
             [
                 'title' => 'Logout',
                 'icon' => 'bi bi-box-arrow-left',
-                'route' => 'dashboard.profile',
+                'route' => 'doLogout',
                 'type' => 'item'
             ]
         ];

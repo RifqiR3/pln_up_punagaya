@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Route;
 // Auth
 Route::get('/', [Auth::class, 'index'])->name('login');
 Route::get('/register', [Auth::class, 'register'])->name('register');
+Route::post('/doLogin', [Auth::class, 'doLogin'])->name('doLogin');
+Route::get('/doLogout', [Auth::class, 'doLogout'])->name('doLogout');
+Route::post('/doRegist', [Auth::class, 'doRegist'])->name('doRegist');
+
 
 // Dashboard
 Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(function () {

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password', 255);
             $table->string('foto', 255)->default('default.png');
             $table->enum('role', ['superadmin', 'admin', 'karyawan']);
+            $table->boolean('is_verified');
             $table->timestamps();
         });
     }

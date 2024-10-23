@@ -16,6 +16,7 @@ class Users extends Model
         'email',
         'password',
         'foto',
-        'role'
+        'role',
+        'is_verified'
     ];
 }

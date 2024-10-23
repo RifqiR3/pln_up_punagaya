@@ -16,6 +16,7 @@
       type="image/png"
     />
 
+    <link rel="stylesheet" href="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/extensions/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/compiled/css/table-datatable.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/extensions/filepond/filepond.css') }}">
@@ -80,5 +81,17 @@
     <!-- Need: Apexcharts -->
     <script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
     <script src="assets/static/js/pages/dashboard.js"></script>
+    <script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
+    <script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>>
+
+    @if (session()->has('success'))
+    <script>
+        Swal.fire({
+            title: "Success",
+            text: "{{session()->get('success')}}",
+            icon: "success"
+        });
+    </script>
+    @endif
   </body>
 </html>

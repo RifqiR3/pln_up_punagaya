@@ -21,6 +21,7 @@ class DataSuperAdmin extends Seeder
             'email' => 'superadmin123@email.com',
             'password' => Hash::make('Adm1nPLN'),
             'role' => 'superadmin',
+            'is_verified' => '1'
         ]);
     }
 }

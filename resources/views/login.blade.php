@@ -38,12 +38,14 @@
               Silahkan Login.
             </p>
 
-            <form action="index.html">
+            <form action="{{ route('doLogin') }}" method="POST" enctype="multipart/form-data">
+              @csrf
               <div class="form-group position-relative has-icon-left mb-4">
                 <input
                   type="email"
                   class="form-control form-control-xl"
                   placeholder="Email"
+                  name="email"
                 />
                 <div class="form-control-icon">
                   <i class="bi bi-envelope"></i>
@@ -54,6 +56,7 @@
                   type="password"
                   class="form-control form-control-xl"
                   placeholder="Password"
+                  name="password"
                 />
                 <div class="form-control-icon">
                   <i class="bi bi-shield-lock"></i>
@@ -68,11 +71,11 @@
                 Belum punya akun?
                 <a href="{{ route('register') }}" class="font-bold">Daftar</a>.
               </p>
-              <p>
+              {{-- <p>
                 <a class="font-bold" href="auth-forgot-password.html"
                   >Forgot password?</a
                 >
-              </p>
+              </p> --}}
             </div>
           </div>
         </div>
@@ -100,6 +103,16 @@
           showConfirmButton: false,
           timer: 2500
         })
+    </script>
+  @endif
+
+  @if (session()->has('success'))
+    <script>
+        Swal.fire({
+            title: "Success",
+            text: "{{session()->get('success')}}",
+            icon: "success"
+        });
     </script>
   @endif
 </html>

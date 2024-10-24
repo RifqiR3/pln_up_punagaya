@@ -40,7 +40,8 @@
         <div class="card">
             <div class="card-content">
               <div class="card-body">
-                <form class="form form-vertical">
+                <form action="{{ route('dashboard.doSubmit') }}" method="POST" enctype="multipart/form-data">
+                  @csrf
                   <div class="form-body">
                     <div class="row">
                       {{-- Nama --}}
@@ -49,10 +50,12 @@
                           <label for="first-name-icon">Nama</label>
                           <div class="position-relative">
                             <input
+                              name="nama"
                               type="text"
                               class="form-control"
                               placeholder="Nama..."
                               id="first-name-icon"
+                              value="{{ $dataUser[0]['nama'] }}"
                               required
                             />
                             <div class="form-control-icon">
@@ -69,6 +72,7 @@
                           <div class="position-relative">
                             <input
                               type="number"
+                              name="nip"
                               class="form-control"
                               placeholder="NIP..."
                               id="email-id-icon"
@@ -88,6 +92,7 @@
                           <div class="position-relative">
                             <input
                               type="text"
+                              name="maksud"
                               class="form-control"
                               placeholder="Maksud Perjalanan..."
                               id="mobile-id-icon"
@@ -106,13 +111,13 @@
                           <label for="password-id-icon">Tujuan Perjalanan</label>
                           <div class="position-relative">
                             <div class="form-group">
-                                <select id="province" class="form-select" required>
+                                <select name="tujuanProvinsi" id="province" class="form-select" required>
                                     <option value="">Pilih Provinsi...</option>
                                 </select>
                             </div>
-
+                            <input type="hidden" id="province-name" name="province_name" />
                             <div class="form-group">
-                                <select id="city" class="form-select" required disabled>
+                                <select name="tujuanKota" id="city" class="form-select" required disabled>
                                     <option value="">Pilih Kota...</option>
                                 </select>
                             </div>
@@ -125,7 +130,7 @@
                         <div class="form-group has-icon-left">
                           <label for="tanggalMulai-icon">Tanggal Mulai</label>
                           <div class="position-relative">
-                            <input required type="text" id="tanggalMulai" class="form-control mb-3 flatpickr-no-config" placeholder="Tanggal Mulai...">
+                            <input required name="tanggalMulai" type="text" id="tanggalMulai" class="form-control mb-3 flatpickr-no-config" placeholder="Tanggal Mulai...">
                             <div class="form-control-icon">
                               <i class="bi bi-calendar"></i>
                             </div>
@@ -138,7 +143,7 @@
                         <div class="form-group has-icon-left">
                           <label for="tanggalSelesai-icon">Tanggal Selesai</label>
                           <div class="position-relative">
-                            <input required type="text" id="tanggalSelesai" class="form-control mb-3 flatpickr-no-config" placeholder="Tanggal Selesai...">
+                            <input required disabled name="tanggalSelesai" type="text" id="tanggalSelesai" class="form-control mb-3 flatpickr-no-config" placeholder="Tanggal Selesai...">
                             <div class="form-control-icon">
                               <i class="bi bi-calendar2-check"></i>
                             </div>
@@ -151,7 +156,7 @@
                         <div class="form-group has-icon-left">
                           <label for="mobile-id-icon">Upload Undangan Dinas</label>
                           <div class="position-relative">
-                            <input required type="file" class="with-validation-filepond" required
+                            <input required name="suratUndangan" type="file" class="with-validation-filepond" required
                                 data-max-file-size="5MB" draggable="true">
                           </div>
                         </div>
@@ -196,17 +201,15 @@
 <script src="{{ url('/assets/static/js/pages/form-element-select.js') }}"></script>
 <script src="{{ url('/assets/extensions/flatpickr/flatpickr.min.js') }}"></script>
 <script src="{{ url('/assets/static/js/pages/date-picker.js') }}"></script>
+<script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
+<script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        flatpickr(".flatpickr-no-config", {
-            dateFormat: "d-m-Y",
-            enableTime: false,    
-            minDate: "today",
-        });
-        // --------------- Tujuan Perjalan -----------------------
+        // --------------- Start Tujuan Perjalan -----------------------
         const provinceSelect = document.getElementById('province');
         const citySelect = document.getElementById('city');
+        const provinceNameInput = document.getElementById('province-name');
         
         const provinceChoices = new Choices(provinceSelect, {
             searchEnabled: true,
@@ -229,7 +232,8 @@
                 
                 const provinceOptions = data.map(province => ({
                     value: province.id,
-                    label: province.name
+                    label: province.name,
+                    customProperties: { name: province.name }
                 }));
                 
                 provinceChoices.setChoices(provinceOptions, 'value', 'label', false);
@@ -238,9 +242,13 @@
                 console.error('Error fetching provinces:', error);
                 alert('Gagal memuat data provinsi. Silakan muat ulang halaman.');
             });
-        
+            
+            let count = 0;
             provinceSelect.addEventListener('change', function(e) {
+                count += 1;
                 const selectedProvinceId = e.target.value;
+                const selectedProvinceName = provinceChoices._currentState.items[count].customProperties.name;
+                provinceNameInput.value = selectedProvinceName;
 
                 cityChoices.removeActiveItems();
                 cityChoices.setChoiceByValue('');
@@ -256,7 +264,7 @@
                         data.sort((a, b) => a.name.localeCompare(b.name));
                         
                         const cityOptions = data.map(city => ({
-                            value: city.id,
+                            value: city.name,
                             label: city.name
                         }));
                         
@@ -283,5 +291,48 @@
                     }]);
                 }
             });
+        // --------------- End Tujuan Perjalan -----------------------
+
+        // --------------- Start Tanggal -----------------------
+        flatpickr("#tanggalMulai", {
+            dateFormat: "d-m-Y",
+            enableTime: false,    
+            minDate: "today",
+        });
+        const tanggalMulai = document.getElementById('tanggalMulai');
+        const tanggalSelesai = document.getElementById('tanggalSelesai');
+        
+        tanggalMulai.addEventListener('change', function(e) {
+          tanggalSelesai.disabled = false;
+
+          flatpickr("#tanggalSelesai", {
+            dateFormat: "d-m-Y",
+            enableTime: false,    
+            minDate: e.target.value,
+          });
+        })
+
+        // --------------- End Tanggal -----------------------
     });
 </script>
+
+@if (session()->has('success'))
+  <script>
+    Swal.fire({
+      title: "Success",
+      text: "{{session()->get('success')}}",
+      icon: "success"
+    });
+  </script>
+@endif
+
+@if (session()->has('error'))
+  <script>
+    Swal.fire({
+      title: "ERROR!",
+      text: "{{session()->get('error')}}",
+      icon: "error"
+    });
+  </script>
+@endif
+

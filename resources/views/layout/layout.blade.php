@@ -55,14 +55,14 @@
           <div class="sidebar-menu">
             <ul class="menu">
               @foreach($menuItems as $item)
-                @if($item['type'] === 'title')
+                @if($item['type'] === 'title' && NavigationHelper::userHasAccess($item))
                     <li class="sidebar-title">{{ $item['title'] }}</li>
-                @else
+                @elseif($item['type'] === 'item' && NavigationHelper::userHasAccess($item))
                     <li class="sidebar-item {{ NavigationHelper::isActive($item['route']) }}">
-                        <a href="{{ route($item['route']) }}" class="sidebar-link">
-                            <i class="{{ $item['icon'] }}"></i>
-                            <span>{{ $item['title'] }}</span>
-                        </a>
+                      <a href="{{ route($item['route']) }}" class="sidebar-link">
+                        <i class="{{ $item['icon'] }}"></i>
+                        <span>{{ $item['title'] }}</span>
+                      </a>
                     </li>
                 @endif
               @endforeach

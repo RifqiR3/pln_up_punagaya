@@ -12,7 +12,7 @@
     <div class="page-title">
       <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-          <h3>Dashboard</h3>
+          <h3>Halo, <strong>{{ session('nama') }}</strong></h3>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
           <nav
@@ -39,6 +39,16 @@
       title: "Success",
       text: "{{session()->get('success')}}",
       icon: "success"
+    });
+  </script>
+@endif
+
+@if (session()->has('error'))
+  <script>
+    Swal.fire({
+      title: "ERROR!",
+      text: "{{session()->get('error')}}",
+      icon: "error"
     });
   </script>
 @endif

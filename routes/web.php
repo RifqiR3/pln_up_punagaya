@@ -16,6 +16,7 @@ Route::post('/doRegist', [Auth::class, 'doRegist'])->name('doRegist');
 Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(function () {
     Route::get('/', [Dashboard::class, 'index'])->name('index');
     Route::get('/submit', [Dashboard::class, 'submit'])->name('submit');
+    Route::post('/doSubmit', [Dashboard::class, 'doSubmit'])->name('doSubmit');
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
     Route::get('/profile', [Dashboard::class, 'profile'])->name('profile');
     Route::get('/konfirmasi', [Dashboard::class, 'konfirmasiAkun'])->name('konfirmasiAkun');

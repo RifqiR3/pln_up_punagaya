@@ -36,7 +36,11 @@ FilePond.create(document.querySelector(".with-validation-filepond"), {
     allowFileEncode: false,
     required: true,
     maxFiles: 1, // Limit to one file
-    acceptedFileTypes: ["application/pdf"], // Accepted file types
+    acceptedFileTypes: [
+        "application/pdf",
+        "application/doc",
+        "application/docx",
+    ], // Accepted file types
     fileValidateTypeDetectType: (source, type) =>
         new Promise((resolve, reject) => {
             // Do custom type detection here and return with promise

@@ -73,3 +73,24 @@
 
 <script src="{{ url('/assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
 <script src="{{ url('/assets/static/js/pages/simple-datatables.js') }}"></script>
+<script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
+<script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>
+@if (session()->has('success'))
+  <script>
+    Swal.fire({
+      title: "Success",
+      text: "{{session()->get('success')}}",
+      icon: "success"
+    });
+  </script>
+@endif
+
+@if (session()->has('error'))
+  <script>
+    Swal.fire({
+      title: "ERROR!",
+      text: "{{session()->get('error')}}",
+      icon: "error"
+    });
+  </script>
+@endif

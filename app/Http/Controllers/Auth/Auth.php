@@ -13,11 +13,17 @@ class Auth extends Controller
 {
     public function index()
     {
+        if (session('nama')) {
+            return redirect()->route('dashboard.index');
+        }
         return view('login');
     }
 
     public function register()
     {
+        if (session('nama')) {
+            return redirect()->route('dashboard.index');
+        }
         return view('register');
     }
 

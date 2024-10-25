@@ -11,14 +11,17 @@ Route::post('/doLogin', [Auth::class, 'doLogin'])->name('doLogin');
 Route::get('/doLogout', [Auth::class, 'doLogout'])->name('doLogout');
 Route::post('/doRegist', [Auth::class, 'doRegist'])->name('doRegist');
 
-
 // Dashboard
 Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(function () {
     Route::get('/', [Dashboard::class, 'index'])->name('index');
     Route::get('/submit', [Dashboard::class, 'submit'])->name('submit');
     Route::post('/doSubmit', [Dashboard::class, 'doSubmit'])->name('doSubmit');
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
+    Route::get('/konfirmsppd', [Dashboard::class, 'konfirmsppd'])->name('konfirmsppd');
     Route::get('/profile', [Dashboard::class, 'profile'])->name('profile');
-    Route::get('/konfirmasi', [Dashboard::class, 'konfirmasiAkun'])->name('konfirmasiAkun');
+    Route::get('/konfirmasiakun', [Dashboard::class, 'konfirmasiAkun'])->name('konfirmasiAkun');
     Route::post('/doKonfirmasiAkun', [Dashboard::class, 'doKonfirmasiAkun'])->name('doKonfirmasiAkun');
+
+    // Cek SPPD
+    Route::get('/lihat-sppd/{uuid}', [Dashboard::class, 'lihatSppd'])->name('lihatSppd')->where('uuid', '[0-9a-f-]{36}');
 });

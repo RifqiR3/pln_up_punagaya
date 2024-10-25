@@ -12,8 +12,8 @@
     <div class="page-title">
       <div class="row">
         <div class="col-12 col-md-6 order-md-1 order-last">
-          <h3>Status SPPD</h3>
-          <p class="text-subtitle text-muted">Periksa status SPPD yang anda masukkan di sini.</p>
+          <h3>Konfirmasi SPPD</h3>
+          <p class="text-subtitle text-muted">Periksa semua SPPD yang masuk.</p>
         </div>
         <div class="col-12 col-md-6 order-md-2 order-first">
           <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -36,33 +36,64 @@
         <div class="card">
             <div class="card-content">
               <div class="card-body">
-                <table class="table table-striped" id="table1">
-                    <thead>
+                <div class="table-responsive">
+                  <table class="table table-striped" id="table1">
+                      <thead>
+                          <tr>
+                              <th>Nama</th>
+                              <th>NIP</th>
+                              <th>Jabatan</th>
+                              <th>Maksud Perjalanan</th>
+                              <th>Tujuan</th>
+                              <th>Waktu Dinas</th>
+                              <th>Status</th>
+                              <th>Surat Undangan</th>
+                              <th>Konfirmasi</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($sppd as $sppd)
                         <tr>
-                            <th>Nama</th>
-                            <th>Tujuan</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Graiden</td>
-                            <td>vehiculak</td>
-                            <td>076 4820 8838</td>
+                            <td>{{ $sppd->nama }}</td>
+                            <td>{{ $sppd->nip }}</td>
+                            <td>{{ $sppd->user->role }}</td>
+                            <td>{{ $sppd->maksud }}</td>
                             <td>
-                                <span class="badge bg-warnin  g">Pending</span>
+                              {{ $sppd->tujuan_kota }},<br>{{ $sppd->tujuan_provinsi }}
+                            </td>
+                            <td>
+                              {{ \Carbon\Carbon::parse($sppd->tanggal_mulai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($sppd->tanggal_mulai)->format('d-m-Y') }}
+                              <br>
+                              {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->format('d-m-Y') }}
+                            </td>
+                            <td>
+                              @if($sppd->status == 'Menunggu Asmen untuk meneruskan SPPD ke Manager')
+                                <span class="badge bg-warning">Pending</span>
+                              @else
+                                <span class="badge bg-warning">{{ $sppd->status }}</span>
+                              @endif
+                            </td>
+                            <td>
+                              <div class="d-flex gap-1 justify-content-center">
+                                <a href="{{ route('dashboard.lihatSppd', $sppd->uuid) }}" 
+                                  class="btn btn-primary" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer">
+                                   Lihat
+                               </a>
+                              </div>
                             </td>
                             <td>
                               <div class="d-flex gap-1">
-                                <button class="btn btn-success">Lihat</button>
-                                <button class="btn btn-danger">Hapus</button>
+                                <button class="btn btn-success">Konfirmasi</button>
+                                <button class="btn btn-danger">Tolak</button>
                               </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
+                        @endforeach
+                      </tbody>
+                  </table>
+                </div>
               </div>
             </div>
         </div>

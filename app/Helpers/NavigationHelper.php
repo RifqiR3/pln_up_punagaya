@@ -39,7 +39,14 @@ class NavigationHelper
                 'icon' => 'bi bi-pencil-square',
                 'route' => 'dashboard.status',
                 'type' => 'item',
-                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
+                'roleMenu' => ['Karyawan']
+            ],
+            [
+                'title' => 'Konfirmasi SPPD',
+                'icon' => 'bi bi-pencil-square',
+                'route' => 'dashboard.konfirmsppd',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager',]
             ],
             [
                 'title' => 'Konfirmasi Akun',

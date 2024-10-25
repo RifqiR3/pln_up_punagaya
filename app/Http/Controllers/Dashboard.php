@@ -8,6 +8,8 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
+use Termwind\Components\Dd;
 
 class Dashboard extends Controller
 {
@@ -18,7 +20,7 @@ class Dashboard extends Controller
         ]);
     }
 
-    // --------------------------------------------- Start Submit ---------------------------------------------
+    // --------------------------------------------- Start Submit/Review ---------------------------------------------
     public function submit()
     {
         $dataUser = Users::where('uuid', '=', session('uuid'))->get();
@@ -81,7 +83,74 @@ class Dashboard extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    // --------------------------------------------- End Submit ---------------------------------------------
+
+    public function konfirmsppd()
+    {
+        $sppd = DataSppd::with('user')->get();
+        return view('statusAdmin', [
+            'title' => 'Konfirmasi SPPD',
+            'sppd' => $sppd
+        ]);
+    }
+
+    public function lihatSppd(string $uuid): Response
+    {
+        try {
+            $sppd = DataSppd::where('data_sppd.uuid', $uuid)
+                ->join('data_user', 'data_user.uuid', '=', 'data_sppd.user_uuid')
+                ->select(
+                    'data_sppd.uuid',
+                    'data_sppd.user_uuid',
+                    'data_sppd.surat_undangan',
+                    'data_sppd.status',
+                    'data_user.role',
+                )
+                ->firstOrFail();
+
+            if (session('role') === 'Asisten Manager' && $sppd->role !== 'Karyawan') {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Manager' && $sppd->status !== 'Menunggu persetujuan Manager') {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Karyawan' && $sppd->user_uuid !== session('uuid')) {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Sekretaris' && $sppd->status !== 'Diproses Sekretaris') {
+                return response('Unauthorized', 403);
+            }
+            // Periksa eksistensi file
+            if (!Storage::disk('public')->exists($sppd->surat_undangan)) {
+                return response('File not found', 404);
+            }
+            // Ambil ekstensi file
+            $extension = pathinfo($sppd->surat_undangan, PATHINFO_EXTENSION);
+            // Ambil file
+            $fileContent = Storage::disk('public')->get($sppd->surat_undangan);
+
+            return response($fileContent)
+                ->header('Content-Type', $this->getContentType($extension))
+                ->header('Content-Disposition', 'inline; filename="' . basename($sppd->surat_undangan) . '"')
+                ->header('Cache-Control', 'public, max-age=3600')
+                ->header('Accept-Range', 'bytes');
+        } catch (\Exception $e) {
+            return response('Error retrieving file: ' . $e->getMessage(), 500);
+        }
+    }
+
+    private function getContentType(string $extension): string
+    {
+        return match (strtolower($extension)) {
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            default => 'application/octet-stream',
+        };
+    }
+    // --------------------------------------------- End Submit/Review ---------------------------------------------
 
     public function status()
     {

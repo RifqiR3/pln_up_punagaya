@@ -157,7 +157,7 @@
                           <label for="mobile-id-icon">Upload Undangan Dinas</label>
                           <div class="position-relative">
                             <input required name="suratUndangan" type="file" class="with-validation-filepond" required
-                                data-max-file-size="5MB" draggable="true">
+                                data-max-file-size="5MB" draggable="true">  
                           </div>
                         </div>
                       </div>

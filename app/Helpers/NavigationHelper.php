@@ -58,7 +58,7 @@ class NavigationHelper
             [
                 'title' => 'Riwayat SPPD',
                 'icon' => 'bi bi-clock-history',
-                'route' => 'dashboard.konfirmasiAkun',
+                'route' => 'dashboard.index',
                 'type' => 'item',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],

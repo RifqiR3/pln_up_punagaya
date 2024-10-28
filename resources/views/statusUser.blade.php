@@ -63,6 +63,8 @@
                               <td>
                                   @if ($sppdItems->status === "Menunggu Asmen untuk meneruskan SPPD ke Manager")
                                     <span class="badge bg-warning">Menunggu konfirmasi Asmen</span>
+                                  @else
+                                    <span class="badge bg-warning">{{ $sppdItems->status }}</span>
                                   @endif
                               </td>
                               <td>
@@ -75,11 +77,15 @@
                                   </a>
                                 </div>
                               </td>
+                              @if ($sppdItems->status !== "Menunggu Asmen untuk meneruskan SPPD ke Manager")
+                                
+                              @else
                               <td>
                                 <div class="d-flex gap-1">
                                   <button type="button" class="btn btn-success" data-bs-toggle='modal' data-bs-target='#editModal{{ $sppdItems->id }}'>Edit</button>
                                   <button class="btn btn-danger">Batal</button>
                               </td>
+                              @endif
                           </tr>
 
                           {{-- Modal --}}
@@ -139,7 +145,7 @@
                                           </div>
                                         </div>
                                       </div>
-                
+                                      
                                       {{-- Maksud Perjalanan --}}
                                       <div class="col-12">
                                         <div class="form-group has-icon-left">
@@ -212,7 +218,7 @@
                                         <div class="form-group has-icon-left">
                                           <label for="mobile-id-icon">Upload Undangan Dinas</label>
                                           <div class="position-relative">
-                                            <input required name="suratUndangan" type="file" class="with-validation-filepond" required
+                                            <input required name="suratUndangan" type="file" id="fileUpload{{ $sppdItems->id }}" class="with-validation-filepond" required
                                                 data-max-file-size="5MB" draggable="true">
                                           </div>
                                         </div>
@@ -271,7 +277,6 @@
 });
 
 function initializeForm(sppdId, selectedProvince, selectedCity, tanggalMulais, tanggalSelesais) {
-    // Initialize Province Select
     const provinceSelect = document.getElementById(`province${sppdId}`);
     const citySelect = document.getElementById(`city${sppdId}`);
     const provinceNameInput = document.getElementById(`province-name${sppdId}`);

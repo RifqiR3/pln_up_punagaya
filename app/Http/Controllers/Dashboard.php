@@ -86,7 +86,19 @@ class Dashboard extends Controller
 
     public function konfirmasiSppd()
     {
+        if (session('role') === 'Sekretaris') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
         if (session('role') === 'superadmin') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
+        if (session('role') === 'Manager') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
+        if (session('role') === 'Asisten Manager') {
             $sppd = DataSppd::with('user')->get();
         }
 
@@ -110,7 +122,7 @@ class Dashboard extends Controller
                 )
                 ->firstOrFail();
 
-            if (session('role') === 'Asisten Manager' && $sppd->role !== 'Karyawan') {
+            if (session('role') === 'Asisten Manager' && $sppd->status !== 'Menunggu Asmen untuk meneruskan SPPD ke Manager') {
                 return response('Unauthorized', 403);
             }
 
@@ -146,6 +158,7 @@ class Dashboard extends Controller
 
     public function doKonfirmSppd(Request $request)
     {
+        dd($request);
         $role = session('role');
         dd($role);
     }

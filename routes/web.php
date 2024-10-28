@@ -25,4 +25,5 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(fu
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
     Route::get('/konfirmasiSppd', [Dashboard::class, 'konfirmasiSppd'])->name('konfirmasiSppd');
     Route::post('/doKonfirmSppd', [Dashboard::class, 'doKonfirmSppd'])->name('doKonfirmSppd');
+    Route::get('/riwayatSppd', [Dashboard::class, 'riwayatSppd'])->name('riwayatSppd');
 });

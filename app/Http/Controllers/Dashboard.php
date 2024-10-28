@@ -11,6 +11,8 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Termwind\Components\Dd;
 
+use function Illuminate\Log\log;
+
 class Dashboard extends Controller
 {
     public function index()
@@ -55,6 +57,19 @@ class Dashboard extends Controller
             $tanggalMulai = \DateTime::createFromFormat('d-m-Y', $validated['tanggalMulai'])->format('Y-m-d');
             $tanggalSelesai = \DateTime::createFromFormat('d-m-Y', $validated['tanggalSelesai'])->format('Y-m-d');
 
+            if (session('role') === 'Manager') {
+                $status = 'Diproses Sekretaris';
+            }
+            if (session('role') === 'Sekretaris') {
+                $status = 'Menunggu persetujuan Manager';
+            }
+            if (session('role') === 'Asisten Manager') {
+                $status = 'Menunggu persetujuan Manager';
+            }
+            if (session('role') === 'Karyawan') {
+                $status = 'Menunggu Asmen untuk meneruskan SPPD ke Manager';
+            }
+
             $sppd = DataSppd::create([
                 'uuid' => Str::uuid(),
                 'user_uuid' => session('uuid'),
@@ -66,12 +81,12 @@ class Dashboard extends Controller
                 'tanggal_mulai' => $tanggalMulai,
                 'tanggal_selesai' => $tanggalSelesai,
                 'surat_undangan' => $undanganPath,
-                'status' => 'Menunggu Asmen untuk meneruskan SPPD ke Manager',
+                'status' => $status,
             ]);
 
             return redirect()
                 ->route('dashboard.status')
-                ->with('success', 'SPPD berhasil disubmit dan menunggu persetujuan.');
+                ->with('success', 'SPPD berhasil disubmit dan ' . $status);
         } catch (\Exception $e) {
             if (isset($undanganPath) && Storage::disk('public')->exists($undanganPath)) {
                 Storage::disk('public')->delete($undanganPath);
@@ -86,20 +101,20 @@ class Dashboard extends Controller
 
     public function konfirmasiSppd()
     {
-        if (session('role') === 'Sekretaris') {
-            $sppd = DataSppd::with('user')->get();
-        }
-
         if (session('role') === 'superadmin') {
             $sppd = DataSppd::with('user')->get();
         }
 
+        if (session('role') === 'Sekretaris') {
+            $sppd = DataSppd::where('status', 'Diproses Sekretaris')->get();
+        }
+
         if (session('role') === 'Manager') {
-            $sppd = DataSppd::with('user')->get();
+            $sppd = DataSppd::where('status', 'Menunggu persetujuan Manager')->get();
         }
 
         if (session('role') === 'Asisten Manager') {
-            $sppd = DataSppd::with('user')->get();
+            $sppd = DataSppd::where('status', 'Menunggu Asmen untuk meneruskan SPPD ke Manager')->get();
         }
 
         return view('konfirmasiSppd', [
@@ -158,9 +173,54 @@ class Dashboard extends Controller
 
     public function doKonfirmSppd(Request $request)
     {
-        dd($request);
-        $role = session('role');
-        dd($role);
+        if (session('role') === 'superadmin') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
+        if (session('role') === 'Sekretaris') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
+        if (session('role') === 'Manager') {
+            try {
+                $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
+                $sppd->status = "Diproses Sekretaris";
+                $sppd->save();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'SPPD akan diproses oleh sekretaris'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e
+                ]);
+            }
+        }
+
+        if (session('role') === 'Asisten Manager') {
+            try {
+                $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
+                $sppd->status = "Menunggu persetujuan Manager";
+                $sppd->save();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'SPPD berhasil diteruskan ke manager'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e
+                ]);
+            }
+        }
+    }
+
+    public function riwayatSppd()
+    {
+        return view('riwayatSppd', [
+            "title" => 'Riwayat SPPD',
+        ]);
     }
 
     // For User

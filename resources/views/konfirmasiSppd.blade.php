@@ -68,11 +68,7 @@
                               {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->format('d-m-Y') }}
                             </td>
                             <td>
-                              @if($sppd->status == 'Menunggu Asmen untuk meneruskan SPPD ke Manager')
-                                <span class="badge bg-warning">Pending</span>
-                              @else
-                                <span class="badge bg-warning">{{ $sppd->status }}</span>
-                              @endif
+                                <span class="badge bg-warning">Menunggu <br> konfirmasi <br> anda</span>
                             </td>
                             <td>
                               <div class="d-flex gap-1 justify-content-center">
@@ -86,8 +82,12 @@
                             </td>
                             <td>
                               <div class="d-flex gap-1">
-                                <button class="btn btn-success btn-terima">Konfirmasi</button>
-                                <button class="btn btn-danger btn-tolak">Tolak</button>
+                                @if (session('role') === "Sekretaris")
+                                  <button class="btn btn-success btn-terima">Upload SPPD</button>
+                                @else
+                                  <button class="btn btn-success btn-terima">Konfirmasi</button>
+                                  <button class="btn btn-danger btn-tolak">Tolak</button>
+                                @endif
                               </div>
                             </td>
                         </tr>
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function(){
               }
             });
 
-            fetch('/dashboard/doKonfirmSppd', {  // Update this URL to match your route
+            fetch('/dashboard/doKonfirmSppd', { 
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -151,11 +151,9 @@ document.addEventListener('DOMContentLoaded', function(){
               })
             })
             .then(response => {
-              // First check if the response is ok
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
               }
-              // Check if the response is JSON
               const contentType = response.headers.get('content-type');
               if (!contentType || !contentType.includes('application/json')) {
                 throw new TypeError("Response was not JSON");

@@ -44,7 +44,7 @@ class NavigationHelper
             [
                 'title' => 'Konfirmasi SPPD',
                 'icon' => 'bi bi-pencil-square',
-                'route' => 'dashboard.konfirmsppd',
+                'route' => 'dashboard.konfirmasiSppd',
                 'type' => 'item',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager',]
             ],
@@ -54,6 +54,13 @@ class NavigationHelper
                 'route' => 'dashboard.konfirmasiAkun',
                 'type' => 'item',
                 'roleMenu' => ['superadmin']
+            ],
+            [
+                'title' => 'Riwayat SPPD',
+                'icon' => 'bi bi-clock-history',
+                'route' => 'dashboard.konfirmasiAkun',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
             [
                 'title' => 'Akun',

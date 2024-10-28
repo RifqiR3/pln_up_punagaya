@@ -84,10 +84,13 @@ class Dashboard extends Controller
         }
     }
 
-    public function konfirmsppd()
+    public function konfirmasiSppd()
     {
-        $sppd = DataSppd::with('user')->get();
-        return view('statusAdmin', [
+        if (session('role') === 'superadmin') {
+            $sppd = DataSppd::with('user')->get();
+        }
+
+        return view('konfirmasiSppd', [
             'title' => 'Konfirmasi SPPD',
             'sppd' => $sppd
         ]);
@@ -141,6 +144,23 @@ class Dashboard extends Controller
         }
     }
 
+    public function doKonfirmSppd(Request $request)
+    {
+        $role = session('role');
+        dd($role);
+    }
+
+    // For User
+    public function status()
+    {
+        $sppd = DataSppd::where('user_uuid', '=', session('uuid'))->with('user')->get();
+
+        return view('statusUser', [
+            'title' => 'Periksa SPPD Karyawan',
+            'sppd' => $sppd
+        ]);
+    }
+
     private function getContentType(string $extension): string
     {
         return match (strtolower($extension)) {
@@ -152,12 +172,7 @@ class Dashboard extends Controller
     }
     // --------------------------------------------- End Submit/Review ---------------------------------------------
 
-    public function status()
-    {
-        return view('statusUser', [
-            'title' => 'Periksa SPPD Karyawan'
-        ]);
-    }
+
 
     public function profile()
     {

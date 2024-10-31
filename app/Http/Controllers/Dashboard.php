@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\DataSppd;
 use App\Models\Role;
 use App\Models\Users;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Termwind\Components\Dd;
-
-use function Illuminate\Log\log;
+use Illuminate\Support\Facades\Log;
 
 class Dashboard extends Controller
 {
@@ -51,7 +52,7 @@ class Dashboard extends Controller
             if ($request->hasFile('suratUndangan')) {
                 $file = $request->file('suratUndangan');
                 $fileName = 'SPPD_' . $validated['nama'] . '_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $undanganPath = $file->storeAs('sppd', $fileName, 'public');
+                $undanganPath = $file->storeAs('surat_undangan', $fileName, 'public');
             }
 
             $tanggalMulai = \DateTime::createFromFormat('d-m-Y', $validated['tanggalMulai'])->format('Y-m-d');
@@ -86,7 +87,7 @@ class Dashboard extends Controller
 
             return redirect()
                 ->route('dashboard.status')
-                ->with('success', 'SPPD berhasil disubmit dan ' . $status);
+                ->with('success', 'Permohonan SPPD berhasil disubmit dan ' . $status);
         } catch (\Exception $e) {
             if (isset($undanganPath) && Storage::disk('public')->exists($undanganPath)) {
                 Storage::disk('public')->delete($undanganPath);
@@ -171,62 +172,184 @@ class Dashboard extends Controller
         }
     }
 
+    public function lihatSppdKonfirm(string $uuid): Response
+    {
+        try {
+            $sppd = DataSppd::where('data_sppd.uuid', $uuid)
+                ->join('data_user', 'data_user.uuid', '=', 'data_sppd.user_uuid')
+                ->select(
+                    'data_sppd.uuid',
+                    'data_sppd.user_uuid',
+                    'data_sppd.sppd_file',
+                    'data_sppd.status',
+                    'data_user.role',
+                )
+                ->firstOrFail();
+
+            if (session('role') === 'Asisten Manager' && $sppd->status !== 'Menunggu Asmen untuk meneruskan SPPD ke Manager') {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Manager' && $sppd->status !== 'Menunggu persetujuan Manager') {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Karyawan' && $sppd->user_uuid !== session('uuid')) {
+                return response('Unauthorized', 403);
+            }
+
+            if (session('role') === 'Sekretaris' && $sppd->status !== 'Diproses Sekretaris') {
+                return response('Unauthorized', 403);
+            }
+            // Periksa eksistensi file
+            if (!Storage::disk('public')->exists('sppd_konfirm/' . $sppd->sppd_file)) {
+                return response('File not found', 404);
+            }
+            // Ambil ekstensi file
+            $extension = pathinfo('sppd_konfirm/' . $sppd->sppd_file, PATHINFO_EXTENSION);
+            // Ambil file
+            $fileContent = Storage::disk('public')->get('sppd_konfirm/' . $sppd->sppd_file);
+
+            return response($fileContent)
+                ->header('Content-Type', $this->getContentType($extension))
+                ->header('Content-Disposition', 'inline; filename="' . basename('sppd_konfirm/' . $sppd->sppd_file) . '"')
+                ->header('Cache-Control', 'public, max-age=3600')
+                ->header('Accept-Range', 'bytes');
+        } catch (\Exception $e) {
+            return response('Error retrieving file: ' . $e->getMessage(), 500);
+        }
+    }
+
     public function doKonfirmSppd(Request $request)
     {
-        if (session('role') === 'superadmin') {
-            $sppd = DataSppd::with('user')->get();
-        }
+        try {
+            $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
 
-        if (session('role') === 'Sekretaris') {
-            $sppd = DataSppd::with('user')->get();
-        }
-
-        if (session('role') === 'Manager') {
-            try {
-                $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
-                $sppd->status = "Diproses Sekretaris";
-                $sppd->save();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'SPPD akan diproses oleh sekretaris'
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e
-                ]);
+            if (session('role') === 'superadmin') {
             }
-        }
 
-        if (session('role') === 'Asisten Manager') {
-            try {
-                $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
-                $sppd->status = "Menunggu persetujuan Manager";
-                $sppd->save();
-                return response()->json([
-                    'success' => true,
-                    'message' => 'SPPD berhasil diteruskan ke manager'
-                ]);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $e
-                ]);
+            if (session('role') === 'Sekretaris') {
+                $sppd->status = 'Selesai';
+                $pesan = "SPPD akan diteruskan ke pihak yang bersangkutan";
             }
+
+            if (session('role') === 'Manager') {
+                $sppd->status = 'Diproses Sekretaris';
+                $pesan = "SPPD akan diposes oleh sekretaris";
+            }
+
+            if (session('role') === 'Asisten Manager') {
+                $sppd->status = 'Menunggu persetujuan Manager';
+                $pesan = "Permohonan SPPD berhasil diteruskan ke manager";
+            }
+
+            $sppd->save();
+            return response()->json([
+                'success' => true,
+                'message' => $pesan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ]);
+        }
+    }
+
+    public function doKonfirmSppdSekretaris(Request $request)
+    {
+        try {
+            $request->validate([
+                'file' => 'required|file|mimes:pdf|max:5120',
+                'uuid' => 'required|string|exists:data_sppd,uuid'
+            ]);
+
+            DB::beginTransaction();
+
+            $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
+
+            $filename = 'sppd_' . $sppd->uuid  . '.pdf';
+
+            if ($sppd->sppd_file) {
+                Storage::disk('public')->delete('sppd_konfirm/' . $sppd->sppd_file);
+            }
+
+            $path = $request->file('file')->storeAs(
+                'sppd_konfirm',
+                $filename,
+                'public'
+            );
+
+            if (!$path) {
+                throw new \Exception('Gagal menyimpan file');
+            }
+
+            $sppd->update([
+                'sppd_file' => $filename,
+                'status' => 'Selesai',
+                'status_konfirmasi' => 1,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'SPPD berhasil diupload dan akan diteruskan ke pihak yang bersangkutan',
+                'filename' => $filename
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            Log::error('SPPD Upload Validation Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal: ' . $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('SPPD Upload Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupload file'
+            ], 500);
+        }
+    }
+
+    public function doTolakSppd(Request $request)
+    {
+        try {
+            $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
+            $sppd->status = 'Ditolak';
+            $sppd->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan SPPD berhasil ditolak'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ]);
         }
     }
 
     public function riwayatSppd()
     {
+        $sppd = DataSppd::where('user_uuid', session('uuid'))
+            ->whereIn('status', ['Selesai', 'Ditolak'])
+            ->get();
         return view('riwayatSppd', [
             "title" => 'Riwayat SPPD',
+            "sppd" => $sppd
         ]);
     }
 
     // For User
     public function status()
     {
-        $sppd = DataSppd::where('user_uuid', '=', session('uuid'))->with('user')->get();
+        $sppd = DataSppd::where('user_uuid', '=', session('uuid'))->with('user')
+            ->whereNotIn('status', ['Selesai', 'Ditolak'])
+            ->get();
 
         return view('statusUser', [
             'title' => 'Periksa SPPD Karyawan',

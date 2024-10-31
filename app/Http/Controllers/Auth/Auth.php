@@ -58,7 +58,7 @@ class Auth extends Controller
                 'role' => $dataUser->role,
             ]);
 
-            return redirect()->route('dashboard.index')->with('success', 'Berhasil Login');
+            return redirect()->route('dashboard.submit')->with('success', 'Berhasil Login');
         } catch (ValidationException) {
             return back()->with('error', 'Terdapat kesalahan pada input form')->withInput();
         } catch (\Exception $err) {

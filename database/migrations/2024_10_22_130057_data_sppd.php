@@ -23,7 +23,9 @@ return new class extends Migration
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->string('surat_undangan');
-            $table->enum('status', ['Menunggu Asmen untuk meneruskan SPPD ke Manager', 'Menunggu persetujuan Manager', 'Diproses Sekretaris'])->default('Menunggu Asmen untuk meneruskan SPPD ke Manager');
+            $table->string('sppd_file')->nullable();
+            $table->boolean('status_konfirmasi')->default(0);
+            $table->enum('status', ['Menunggu Asmen untuk meneruskan SPPD ke Manager', 'Menunggu persetujuan Manager', 'Diproses Sekretaris', 'Selesai', 'Ditolak'])->default('Menunggu Asmen untuk meneruskan SPPD ke Manager');
             $table->text('catatan')->nullable();
             $table->timestamps();
 

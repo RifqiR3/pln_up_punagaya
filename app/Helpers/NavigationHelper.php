@@ -20,13 +20,13 @@ class NavigationHelper
                 'type' => 'title',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
-            [
-                'title' => 'Dashboard',
-                'icon' => 'bi bi-grid-fill',
-                'route' => 'dashboard.index',
-                'type' => 'item',
-                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
-            ],
+            // [
+            //     'title' => 'Dashboard',
+            //     'icon' => 'bi bi-grid-fill',
+            //     'route' => 'dashboard.index',
+            //     'type' => 'item',
+            //     'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
+            // ],
             [
                 'title' => 'Submit SPPD',
                 'icon' => 'bi bi-file-earmark-medical-fill',
@@ -46,7 +46,7 @@ class NavigationHelper
                 'icon' => 'bi bi-pencil-square',
                 'route' => 'dashboard.konfirmasiSppd',
                 'type' => 'item',
-                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager',]
+                'roleMenu' => ['Sekretaris', 'Manager', 'Asisten Manager',]
             ],
             [
                 'title' => 'Konfirmasi Akun',
@@ -67,13 +67,13 @@ class NavigationHelper
                 'type' => 'title',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
-            [
-                'title' => 'Profile',
-                'icon' => 'bi bi-person',
-                'route' => 'dashboard.profile',
-                'type' => 'item',
-                'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
-            ],
+            // [
+            //     'title' => 'Profile',
+            //     'icon' => 'bi bi-person',
+            //     'route' => 'dashboard.profile',
+            //     'type' => 'item',
+            //     'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
+            // ],
             [
                 'title' => 'Logout',
                 'icon' => 'bi bi-box-arrow-left',

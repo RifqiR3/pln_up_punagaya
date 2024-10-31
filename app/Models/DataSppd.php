@@ -18,6 +18,8 @@ class DataSppd extends Model
         'tanggal_mulai',
         'tanggal_selesai',
         'surat_undangan',
+        'sppd_file',
+        'status_konfirmasi',
         'status',
         'catatan'
     ];

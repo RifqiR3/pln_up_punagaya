@@ -35,7 +35,7 @@
               <div class="logo">
                 <a href="{{ route('dashboard.index') }}"
                   ><img
-                    src="/image/pln-logo.png"
+                    src="/image/punagaya.png"
                     alt="Logo"
                     srcset=""
                     class="w-100 h-100"

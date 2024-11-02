@@ -58,6 +58,10 @@ class Dashboard extends Controller
             $tanggalMulai = \DateTime::createFromFormat('d-m-Y', $validated['tanggalMulai'])->format('Y-m-d');
             $tanggalSelesai = \DateTime::createFromFormat('d-m-Y', $validated['tanggalSelesai'])->format('Y-m-d');
 
+            if (session('role') === 'superadmin') {
+                $status = 'Menunggu persetujuan Manager';
+            }
+
             if (session('role') === 'Manager') {
                 $status = 'Diproses Sekretaris';
             }

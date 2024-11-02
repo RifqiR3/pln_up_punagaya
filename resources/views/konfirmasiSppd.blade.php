@@ -345,6 +345,8 @@ document.addEventListener('DOMContentLoaded', function(){
                   request.onload = function() {
                     if (request.status >= 200 && request.status < 300) {
                       load(request.responseText);
+                      Swal.enableButtons();
+
                     } else {
                       error('Upload failed');
                     }
@@ -359,6 +361,19 @@ document.addEventListener('DOMContentLoaded', function(){
                     }
                   };
                 }
+              }
+            });
+
+            pond.on('addfile', (error, file) => {
+              if(!error){
+                Swal.enableButtons();
+                Swal.resetValidationMessage();
+              }
+            });
+
+            pond.on('removefile', () => {
+              if(pond.getFiles().length === 0){
+                Swal.disableButtons();
               }
             });
           },

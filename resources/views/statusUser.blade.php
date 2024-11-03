@@ -77,13 +77,17 @@
                                   </a>
                                 </div>
                               </td>
-                              @if ($sppdItems->status !== "Menunggu Asmen untuk meneruskan SPPD ke Manager")
-                                
+                              @if ($sppdItems->status !== "Diproses Sekretaris")
+                                <td>
+                                  <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-success" data-bs-toggle='modal' data-bs-target='#editModal{{ $sppdItems->id }}'>Edit</button>
+                                    <button class="btn btn-danger">Batal</button>
+                                </td>
                               @else
                               <td>
                                 <div class="d-flex gap-1">
-                                  <button type="button" class="btn btn-success" data-bs-toggle='modal' data-bs-target='#editModal{{ $sppdItems->id }}'>Edit</button>
-                                  <button class="btn btn-danger">Batal</button>
+                                  <button disabled type="button" class="btn btn-success" data-bs-toggle='modal' data-bs-target='#editModal{{ $sppdItems->id }}'>Edit</button>
+                                  <button disabled ="btn btn-danger">Batal</button>
                               </td>
                               @endif
                           </tr>

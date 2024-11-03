@@ -36,7 +36,7 @@ class NavigationHelper
             ],
             [
                 'title' => 'Status SPPD',
-                'icon' => 'bi bi-pencil-square',
+                'icon' => 'bi bi-file-earmark',
                 'route' => 'dashboard.status',
                 'type' => 'item',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']

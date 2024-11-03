@@ -85,12 +85,21 @@
                               </div>
                             </td>
                             <td>
+                              @if ( $sppd->status === 'Ditolak' )
+                                {{-- <a disabled href="{{ route('dashboard.lihatSppdKonfirm', $sppd->uuid) }}" 
+                                  class="btn btn-primary" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer">
+                                    <i class="bi bi-eye"></i>
+                                </a>  --}}
+                              @else
                                 <a href="{{ route('dashboard.lihatSppdKonfirm', $sppd->uuid) }}" 
                                   class="btn btn-primary" 
                                   target="_blank" 
                                   rel="noopener noreferrer">
                                     <i class="bi bi-eye"></i>
-                                </a>
+                                </a> 
+                              @endif
                             </td>
                         </tr>
                         @endforeach

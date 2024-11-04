@@ -22,7 +22,7 @@
                 <a href="{{ route('dashboard.index') }}">Dashboard</a>
               </li>
               <li class="breadcrumb-item active" aria-current="page">
-                Konfirmasi
+                Konfirmasi Akun
               </li>
             </ol>
           </nav>

@@ -72,7 +72,8 @@
                                   <a href="{{ route('dashboard.lihatSppd', $sppdItems->uuid) }}" 
                                     class="btn btn-primary" 
                                     target="_blank" 
-                                    rel="noopener noreferrer">
+                                    rel="noopener noreferrer"
+                                    type="application/pdf">
                                      <i class="bi bi-eye"></i>
                                   </a>
                                 </div>

@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title }}</title>
 
@@ -33,7 +35,7 @@
           <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
               <div class="logo">
-                <a href="{{ route('dashboard.index') }}"
+                <a href="{{ route('dashboard.submit') }}"
                   ><img
                     src="/image/punagaya.png"
                     alt="Logo"
@@ -62,7 +64,19 @@
                 @endif
               @endforeach
             </ul>
-
+          </div>
+          <div class="sidebar-header position-relative">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="logo">
+                <a href="{{ route('dashboard.submit') }}"
+                  ><img
+                    src="/image/asa.png"
+                    alt="Logo"
+                    srcset=""
+                    class="w-100 h-100"
+                /></a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

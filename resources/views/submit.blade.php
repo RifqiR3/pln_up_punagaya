@@ -23,10 +23,7 @@
             >
               <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                  <a href="{{ route('dashboard.index') }}">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                  Submit
+                  <a href="{{ route('dashboard.submit') }}">Submit Permohonan SPPD</a>
                 </li>
               </ol>
             </nav>

@@ -62,7 +62,7 @@
                               </td>
                               <td>
                                   @if ($sppdItems->status === "Menunggu Asmen untuk meneruskan SPPD ke Manager")
-                                    <span class="badge bg-warning">Menunggu konfirmasi Asmen</span>
+                                    <span class="badge bg-warning">Menunggu konfirmasi Asisten Manager</span>
                                   @else
                                     <span class="badge bg-warning">{{ $sppdItems->status }}</span>
                                   @endif

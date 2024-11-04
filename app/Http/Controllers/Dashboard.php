@@ -154,7 +154,7 @@ class Dashboard extends Controller
                 return response('Unauthorized', 403);
             }
 
-            if (session('role') === 'Sekretaris' && $sppd->status !== 'Diproses Sekretaris') {
+            if (session('role') === 'Sekretaris' && $sppd->user_uuid !== session('uuid')) {
                 return response('Unauthorized', 403);
             }
             // Periksa eksistensi file

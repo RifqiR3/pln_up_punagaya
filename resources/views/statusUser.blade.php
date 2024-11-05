@@ -66,7 +66,7 @@
                               </td>
                               <td>
                                 <div class="d-flex gap-1">
-                                  <a href="{{ route('dashboard.lihatSppd', $sppdItems->uuid) }}" 
+                                  <a href="{{ route('dashboard.lihatSppdStatus', $sppdItems->uuid) }}" 
                                     class="btn btn-primary" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
@@ -79,7 +79,7 @@
                                 <td>
                                   <div class="d-flex gap-1">
                                     <button type="button" class="btn btn-success" data-bs-toggle='modal' data-bs-target='#editModal{{ $sppdItems->id }}'>Edit</button>
-                                    <button class="btn btn-danger">Batal</button>
+                                    <button class="btn btn-danger btn-batal">Batal</button>
                                 </td>
                               @else
                               <td>
@@ -276,6 +276,88 @@
     @foreach ($sppd as $item)
         initializeForm('{{ $item->id }}', '{{ $item->tujuan_provinsi }}', '{{ $item->tujuan_kota }}', '{{ \Carbon\Carbon::parse($item->tanggal_mulai)->format('d-m-Y') }}', '{{ \Carbon\Carbon::parse($item->tanggal_selesai)->format('d-m-Y') }}');
     @endforeach
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    document.querySelectorAll('.btn-batal').forEach(button => {
+      button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const data = {
+          uuid: row.dataset.uuid,
+        };
+
+        Swal.fire({
+          title: 'Tunggu!',
+          icon: 'question',
+          text: 'Anda yakin ingin membatalkan permohonan SPPD ini?',
+          allowOutsideClick: false,
+          showCancelButton: true,
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'Batalkan',
+          cancelButtonText: 'Keluar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire({
+              title: 'Memproses...',
+              text: 'Mohon tunggu sebentar',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              willOpen: () => {
+                Swal.showLoading();
+              }
+            })
+
+            fetch('/dashboard/doBatalSppd', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                uuid: data.uuid
+              })
+            })
+            .then(response => {
+              if(!response.ok){
+                throw new Error(`HTTP error! status: ${response.status}`)
+              }
+              const contentType = response.headers.get('content-type');
+              if (!contentType || !contentType.includes('application/json')) {
+                throw new TypeError("Response was not JSON");
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.success) {
+                return Swal.fire({
+                  icon: 'success',
+                  title: 'Berhasil',
+                  showConfirmButton: true,
+                  allowOutsideClick: false,
+                  text: data.message
+                }).then((result) => {
+                  window.location.reload();
+                })
+              } else {
+                return Swal.fire({
+                  icon: 'error',
+                  title: 'ERROR!',
+                  text: data.message,
+                  showConfirmButton: true,
+                  showCancelButton: false,
+                  allowOutsideClick: false
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.reload();
+                  }
+                })
+              }
+            })
+          }
+        })
+      })
+    })
 });
 
 function initializeForm(sppdId, selectedProvince, selectedCity, tanggalMulais, tanggalSelesais) {

@@ -73,7 +73,7 @@
                             </td>
                             <td>
                               <div class="d-flex gap-1 justify-content-center">
-                                <a href="{{ route('dashboard.lihatSppd', $sppd->uuid) }}" 
+                                <a href="{{ route('dashboard.lihatSppdStatus', $sppd->uuid) }}" 
                                   class="btn btn-primary" 
                                   target="_blank" 
                                   rel="noopener noreferrer">
@@ -82,7 +82,7 @@
                               </div>
                             </td>
                             <td>
-                              @if ( $sppd->status === 'Ditolak' )
+                              @if ( $sppd->status === 'Ditolak' || $sppd->status === 'Dibatalkan')
                                 {{-- <a disabled href="{{ route('dashboard.lihatSppdKonfirm', $sppd->uuid) }}" 
                                   class="btn btn-primary" 
                                   target="_blank" 

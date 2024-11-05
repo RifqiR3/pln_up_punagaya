@@ -22,11 +22,13 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(fu
 
     // SPPD ROUTE
     Route::get('/lihat-sppd/{uuid}', [Dashboard::class, 'lihatSppd'])->name('lihatSppd')->where('uuid', '[0-9a-f-]{36}');
+    Route::get('/lihat-sppdStatus/{uuid}', [Dashboard::class, 'lihatSppdStatus'])->name('lihatSppdStatus')->where('uuid', '[0-9a-f-]{36}');
     Route::get('/lihat-sppdKonfirm/{uuid}', [Dashboard::class, 'lihatSppdKonfirm'])->name('lihatSppdKonfirm')->where('uuid', '[0-9a-f-]{36}');
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
     Route::get('/konfirmasiSppd', [Dashboard::class, 'konfirmasiSppd'])->name('konfirmasiSppd');
     Route::post('/doKonfirmSppd', [Dashboard::class, 'doKonfirmSppd'])->name('doKonfirmSppd');
     Route::post('/doKonfirmSppdSekretaris', [Dashboard::class, 'doKonfirmSppdSekretaris'])->name('doKonfirmSppdSekretaris');
     Route::post('/doTolakSppd', [Dashboard::class, 'doTolakSppd'])->name('doTolakSppd');
+    Route::post('/doBatalSppd', [Dashboard::class, 'doBatalSppd'])->name('doBatalSppd');
     Route::get('/riwayatSppd', [Dashboard::class, 'riwayatSppd'])->name('riwayatSppd');
 });

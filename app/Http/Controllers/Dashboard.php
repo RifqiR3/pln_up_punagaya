@@ -154,9 +154,46 @@ class Dashboard extends Controller
                 return response('Unauthorized', 403);
             }
 
-            if (session('role') === 'Sekretaris' && $sppd->user_uuid !== session('uuid')) {
+            if (session('role') === 'Sekretaris' && $sppd->status !== 'Diproses Sekretaris') {
                 return response('Unauthorized', 403);
             }
+            // Periksa eksistensi file
+            if (!Storage::disk('public')->exists($sppd->surat_undangan)) {
+                return response('File not found', 404);
+            }
+            // Ambil ekstensi file
+            $extension = pathinfo($sppd->surat_undangan, PATHINFO_EXTENSION);
+            // Ambil file
+            $fileContent = Storage::disk('public')->get($sppd->surat_undangan);
+
+            return response($fileContent)
+                ->header('Content-Type', $this->getContentType($extension))
+                ->header('Content-Disposition', 'inline; filename="' . basename($sppd->surat_undangan) . '"')
+                ->header('Cache-Control', 'public, max-age=3600')
+                ->header('Accept-Range', 'bytes');
+        } catch (\Exception $e) {
+            return response('Error retrieving file: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function lihatSppdStatus(string $uuid): Response
+    {
+        try {
+            $sppd = DataSppd::where('data_sppd.uuid', $uuid)
+                ->join('data_user', 'data_user.uuid', '=', 'data_sppd.user_uuid')
+                ->select(
+                    'data_sppd.uuid',
+                    'data_sppd.user_uuid',
+                    'data_sppd.surat_undangan',
+                    'data_sppd.status',
+                    'data_user.role',
+                )
+                ->firstOrFail();
+
+            if (session('uuid') !== $sppd->user_uuid) {
+                return response('Unauthorized', 403);
+            }
+
             // Periksa eksistensi file
             if (!Storage::disk('public')->exists($sppd->surat_undangan)) {
                 return response('File not found', 404);
@@ -190,19 +227,7 @@ class Dashboard extends Controller
                 )
                 ->firstOrFail();
 
-            if (session('role') === 'Asisten Manager' && $sppd->status !== 'Menunggu Asmen untuk meneruskan SPPD ke Manager') {
-                return response('Unauthorized', 403);
-            }
-
-            if (session('role') === 'Manager' && $sppd->status !== 'Menunggu persetujuan Manager') {
-                return response('Unauthorized', 403);
-            }
-
-            if (session('role') === 'Karyawan' && $sppd->user_uuid !== session('uuid')) {
-                return response('Unauthorized', 403);
-            }
-
-            if (session('role') === 'Sekretaris' && $sppd->status !== 'Diproses Sekretaris') {
+            if (session('uuid') !== $sppd->user_uuid) {
                 return response('Unauthorized', 403);
             }
             // Periksa eksistensi file
@@ -323,6 +348,7 @@ class Dashboard extends Controller
         try {
             $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
             $sppd->status = 'Ditolak';
+            $sppd->catatan = 'oleh ' . $request->nama;
             $sppd->save();
 
             return response()->json([
@@ -337,10 +363,29 @@ class Dashboard extends Controller
         }
     }
 
+    public function doBatalSppd(Request $request)
+    {
+        try {
+            $sppd = DataSppd::where('uuid', $request->uuid)->firstOrFail();
+            $sppd->status = 'Dibatalkan';
+            $sppd->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Permohonan SPPD berhasil dibatalkan'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ]);
+        }
+    }
+
     public function riwayatSppd()
     {
         $sppd = DataSppd::where('user_uuid', session('uuid'))
-            ->whereIn('status', ['Selesai', 'Ditolak'])
+            ->whereIn('status', ['Selesai', 'Ditolak', 'Dibatalkan'])
             ->get();
         return view('riwayatSppd', [
             "title" => 'Riwayat SPPD',
@@ -352,7 +397,7 @@ class Dashboard extends Controller
     public function status()
     {
         $sppd = DataSppd::where('user_uuid', '=', session('uuid'))->with('user')
-            ->whereNotIn('status', ['Selesai', 'Ditolak'])
+            ->whereNotIn('status', ['Selesai', 'Ditolak', 'Dibatalkan'])
             ->get();
 
         return view('statusUser', [

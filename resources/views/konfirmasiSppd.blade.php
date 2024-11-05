@@ -54,7 +54,8 @@
                       </thead>
                       <tbody>
                         @foreach ($sppd as $sppd)
-                        <tr data-uuid="{{ $sppd->uuid }}">
+                        <tr data-uuid="{{ $sppd->uuid }}" data-nama="{{ session('nama') }}">
+                            <td hidden> {{ session('nama') }} </td>
                             <td hidden> {{ $sppd->uuid }} </td>
                             <td>{{ $sppd->nama }}</td>
                             <td>{{ $sppd->nip }}</td>
@@ -209,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const row = this.closest('tr');
         const data = {
           uuid: row.dataset.uuid,
+          nama: row.dataset.nama
         }
         
         Swal.fire({
@@ -241,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function(){
               },
               body: JSON.stringify({
                 uuid: data.uuid,
+                nama: data.nama
               })
             })
             .then(response => {

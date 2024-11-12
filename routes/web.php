@@ -27,8 +27,17 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(fu
     Route::get('/status', [Dashboard::class, 'status'])->name('status');
     Route::get('/konfirmasiSppd', [Dashboard::class, 'konfirmasiSppd'])->name('konfirmasiSppd');
     Route::post('/doKonfirmSppd', [Dashboard::class, 'doKonfirmSppd'])->name('doKonfirmSppd');
+    Route::post('/doEditSppd', [Dashboard::class, 'doEditSppd'])->name('doEditSppd');
     Route::post('/doKonfirmSppdSekretaris', [Dashboard::class, 'doKonfirmSppdSekretaris'])->name('doKonfirmSppdSekretaris');
     Route::post('/doTolakSppd', [Dashboard::class, 'doTolakSppd'])->name('doTolakSppd');
     Route::post('/doBatalSppd', [Dashboard::class, 'doBatalSppd'])->name('doBatalSppd');
     Route::get('/riwayatSppd', [Dashboard::class, 'riwayatSppd'])->name('riwayatSppd');
+
+    // MOBIL DINAS ROUTE
+    Route::get('/submitMobilDinas', [Dashboard::class, 'submitMobilDinas'])->name('submitMobilDinas');
+    Route::get('/statusMobilDinas', [Dashboard::class, 'statusMobilDinas'])->name('statusMobilDinas');
+    Route::get('/konfirmasiMobilDinas', [Dashboard::class, 'konfirmasiMobilDinas'])->name('konfirmasiMobilDinas');
+    Route::get('/manageDriver', [Dashboard::class, 'manageDriver'])->name('manageDriver');
+    Route::post('/doKonfirmasiDriver', [Dashboard::class, 'doKonfirmasiDriver'])->name('doKonfirmasiDriver');
+    Route::post('/doSubmitMobilDinas', [Dashboard::class, 'doSubmitMobilDinas'])->name('doSubmitMobilDinas');
 });

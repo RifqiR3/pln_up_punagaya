@@ -37,7 +37,7 @@
                     <thead>
                         <tr>
                             <th>Tujuan</th>
-                            <th>Tanggal</th>
+                            <th>Tanggal</th>s
                             <th>Maksud Perjalanan</th>
                             <th>Status</th>
                             <th>Surat <br> Undangan</th>
@@ -102,7 +102,7 @@
                                     <i data-feather="x"></i>
                                   </button>
                                 </div>
-                                <form action="">
+                                <form action="{{ route('dashboard.doEditSppd') }}" method="POST" enctype="multipart/form-data">
                                   @csrf
                                   <div class="modal-body">
                                     <div class="row">
@@ -185,6 +185,7 @@
                                                 <option value="{{ $sppdItems->tujuan_kota }}">{{ $sppdItems->tujuan_kota }}</option>
                                               </select>
                                             </div>
+                                            <input type="hidden" id="city-name{{ $sppdItems->id }}" name="city_name" value="{{ $sppdItems->tujuan_kota }}" />
                                           </div>
                                         </div>
                                       </div>
@@ -220,7 +221,7 @@
                                         <div class="form-group has-icon-left">
                                           <label for="mobile-id-icon">Upload Undangan Dinas</label>
                                           <div class="position-relative">
-                                            <input required name="suratUndangan" type="file" id="fileUpload{{ $sppdItems->id }}" class="with-validation-filepond" required
+                                            <input name="suratUndangan" type="file" id="fileUpload{{ $sppdItems->id }}" class="with-validation-filepond" required
                                                 data-max-file-size="5MB" draggable="true">
                                           </div>
                                         </div>
@@ -249,7 +250,6 @@
     </div>
   </section>
 
-  
 </main>
 
 <script src="{{ url('/assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
@@ -364,6 +364,7 @@ function initializeForm(sppdId, selectedProvince, selectedCity, tanggalMulais, t
     const provinceSelect = document.getElementById(`province${sppdId}`);
     const citySelect = document.getElementById(`city${sppdId}`);
     const provinceNameInput = document.getElementById(`province-name${sppdId}`);
+    const cityNameInput = document.getElementById(`city-name${sppdId}`);
     
     const provinceChoices = new Choices(provinceSelect, {
         searchEnabled: true,
@@ -425,11 +426,13 @@ function initializeForm(sppdId, selectedProvince, selectedCity, tanggalMulais, t
                     
                     const cityOptions = data.map(city => ({
                         value: city.name,
-                        label: city.name
+                        label: city.name,
+                        customProperties: { name: city.name }
                     }));
                     
                     cityChoices.clearChoices();
                     cityChoices.setChoices(cityOptions, 'value', 'label', false);
+
                 })
                 .catch(error => {
                     console.error('Error fetching cities:', error);
@@ -451,6 +454,10 @@ function initializeForm(sppdId, selectedProvince, selectedCity, tanggalMulais, t
             }]);
         }
     });
+
+    citySelect.addEventListener('change', function (e) {
+      cityNameInput.value = e.target.value;
+    })
 
     const startPicker = flatpickr(`#tanggalMulai${sppdId}`, {
       dateFormat: "d-m-Y",
@@ -482,14 +489,15 @@ function loadCities(provinceId, cityChoices, selectedCity = null) {
             
             const cityOptions = data.map(city => ({
                 value: city.name,
-                label: city.name
+                label: city.name,
+                customProperties: { name: city.name }
             }));
             
             cityChoices.clearChoices();
             cityChoices.setChoices(cityOptions, 'value', 'label', false);
-
+            
             if (selectedCity) {
-                cityChoices.setChoiceByValue(selectedCity);
+              cityChoices.setChoiceByValue(selectedCity);
             }
         })
         .catch(error => {

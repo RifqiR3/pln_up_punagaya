@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataDriver;
 use App\Models\DataSppd;
 use App\Models\Role;
 use App\Models\Users;
@@ -18,9 +19,7 @@ class Dashboard extends Controller
 {
     public function index()
     {
-        return view('dashboard', [
-            'title' => "Dashboard"
-        ]);
+        return redirect(route('dashboard.submit'));
     }
 
     // --------------------------------------------- Start Submit/Review ---------------------------------------------
@@ -382,6 +381,11 @@ class Dashboard extends Controller
         }
     }
 
+    public function doEditSppd(Request $request)
+    {
+        dd($request);
+    }
+
     public function riwayatSppd()
     {
         $sppd = DataSppd::where('user_uuid', session('uuid'))
@@ -416,13 +420,6 @@ class Dashboard extends Controller
         };
     }
     // --------------------------------------------- End Submit/Review ---------------------------------------------
-
-
-
-    public function profile()
-    {
-        return view('profile');
-    }
 
     // --------------------------------------------- Start Konfirmasi Akun ---------------------------------------------
     public function konfirmasiAkun()
@@ -476,4 +473,73 @@ class Dashboard extends Controller
     }
     // --------------------------------------------- End Konfirmasi Akun ---------------------------------------------
 
+    // --------------------------------------------- Start Mobil Dinas ---------------------------------------------
+    public function submitMobilDinas()
+    {
+        $dataUser = Users::where('uuid', '=', session('uuid'))->get();
+
+        return view('submitMobilDinas', [
+            'title' => 'Submit Mobil Dinas',
+            'dataUser' => $dataUser
+        ]);
+    }
+
+    public function doSubmitMobilDinas(Request $request)
+    {
+        dd($request);
+    }
+
+    public function statusMobilDinas()
+    {
+        return view('statusMobilDinas', [
+            'title' => 'Status Mobil Dinas'
+        ]);
+    }
+
+    public function konfirmasiMobilDinas()
+    {
+        return view('konfirmasiMobilDinas', [
+            'title' => 'Konfirmasi Mobil Dinas'
+        ]);
+    }
+
+    public function manageDriver()
+    {
+        $dataDriver = DataDriver::all();
+        return view('manageDriver', [
+            'title' => 'Manage Driver',
+            'dataDriver' => $dataDriver
+        ]);
+    }
+
+    public function doKonfirmasiDriver(Request $request)
+    {
+        try {
+            DataDriver::create([
+                'uuid' => Str::uuid(),
+                'nama' => $request->nama,
+                'plat_mobil' => $request->plat
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data driver berhasil ditambah!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ]);
+        }
+    }
+
+    // --------------------------------------------- End Mobil Dinas ---------------------------------------------
+
+
+
+
+    public function profile()
+    {
+        return view('profile');
+    }
 }

@@ -16,7 +16,7 @@ class NavigationHelper
     {
         return [
             [
-                'title' => 'Menu',
+                'title' => 'SPPD',
                 'type' => 'title',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
@@ -49,13 +49,6 @@ class NavigationHelper
                 'roleMenu' => ['Sekretaris', 'Manager', 'Asisten Manager',]
             ],
             [
-                'title' => 'Konfirmasi Akun',
-                'icon' => 'bi bi-people-fill',
-                'route' => 'dashboard.konfirmasiAkun',
-                'type' => 'item',
-                'roleMenu' => ['superadmin']
-            ],
-            [
                 'title' => 'Riwayat SPPD',
                 'icon' => 'bi bi-clock-history',
                 'route' => 'dashboard.riwayatSppd',
@@ -63,17 +56,50 @@ class NavigationHelper
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
             [
+                'title' => 'Mobil Dinas',
+                'type' => 'title',
+                'roleMenu' => ['superadmin', 'Karyawan', 'Asisten Manager']
+            ],
+            [
+                'title' => 'Submit Mobil Dinas',
+                'icon' => 'bi bi-car-front-fill',
+                'route' => 'dashboard.submitMobilDinas',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Karyawan']
+            ],
+            [
+                'title' => 'Status Mobil Dinas',
+                'icon' => 'bi bi-file-earmark',
+                'route' => 'dashboard.statusMobilDinas',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Karyawan']
+            ],
+            [
+                'title' => 'Konfirmasi Mobil Dinas',
+                'icon' => 'bi bi-check-circle',
+                'route' => 'dashboard.konfirmasiMobilDinas',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Asisten Manager']
+            ],
+            [
+                'title' => 'Manage Driver',
+                'icon' => 'bi bi-person-badge',
+                'route' => 'dashboard.manageDriver',
+                'type' => 'item',
+                'roleMenu' => ['superadmin', 'Asisten Manager']
+            ],
+            [
                 'title' => 'Akun',
                 'type' => 'title',
                 'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
             ],
-            // [
-            //     'title' => 'Profile',
-            //     'icon' => 'bi bi-person',
-            //     'route' => 'dashboard.profile',
-            //     'type' => 'item',
-            //     'roleMenu' => ['superadmin', 'Sekretaris', 'Manager', 'Asisten Manager', 'Karyawan']
-            // ],
+            [
+                'title' => 'Konfirmasi Akun',
+                'icon' => 'bi bi-people-fill',
+                'route' => 'dashboard.konfirmasiAkun',
+                'type' => 'item',
+                'roleMenu' => ['superadmin']
+            ],
             [
                 'title' => 'Logout',
                 'icon' => 'bi bi-box-arrow-left',

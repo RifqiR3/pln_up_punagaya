@@ -68,8 +68,8 @@
 
 <script src="{{ url('/assets/extensions/simple-datatables/umd/simple-datatables.js') }}"></script>
 <script src="{{ url('/assets/static/js/pages/simple-datatables.js') }}"></script>
-<script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>>
-<script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>>
+<script src="{{ url('/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ url('/assets/static/js/pages/sweetalert2.js') }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

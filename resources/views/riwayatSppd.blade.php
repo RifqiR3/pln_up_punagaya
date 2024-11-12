@@ -37,9 +37,7 @@
                   <table class="table table-striped" id="table1">
                       <thead>
                           <tr>
-                              <th>Nama</th>
-                              <th>NIP</th>
-                              <th>Jabatan</th>
+                              <th>No.</th>
                               <th>Maksud Perjalanan</th>
                               <th>Tujuan</th>
                               <th>Waktu Dinas</th>
@@ -49,12 +47,18 @@
                           </tr>
                       </thead>
                       <tbody>
+                        @php
+                            $nomor = 1;
+                        @endphp
                         @foreach ($sppd as $sppd)
                         <tr data-uuid="{{ $sppd->uuid }}">
                             <td hidden> {{ $sppd->uuid }} </td>
-                            <td>{{ $sppd->nama }}</td>
-                            <td>{{ $sppd->nip }}</td>
-                            <td>{{ $sppd->user->role }}</td>
+                            <td>
+                              @php
+                                  echo $nomor;
+                                  $nomor++;
+                              @endphp
+                            </td>
                             <td>{{ $sppd->maksud }}</td>
                             <td>
                               {{ $sppd->tujuan_kota }},<br>{{ $sppd->tujuan_provinsi }}
@@ -65,11 +69,11 @@
                               {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($sppd->tanggal_selesai)->format('d-m-Y') }}
                             </td>
                             <td>
-                                @if ($sppd->status === 'Selesai')
-                                    <span class="badge bg-success">{{ $sppd->status }}</span>
-                                @else
-                                    <span class="badge bg-danger">{{ $sppd->status }}</span>
-                                @endif
+                              @if ($sppd->status === 'Selesai')
+                                <span class="badge bg-success">{{ $sppd->status }}</span>
+                              @else
+                                <span class="badge bg-danger">{{ $sppd->status }}</span>
+                              @endif
                             </td>
                             <td>
                               <div class="d-flex gap-1 justify-content-center">

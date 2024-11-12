@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('tujuan_kota');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
-            $table->uuid('driver_uuid');
+            $table->uuid('driver_uuid')->default('0001');
             $table->boolean('status_konfirmasi')->default(0);
             $table->timestamps();
 

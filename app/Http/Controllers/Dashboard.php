@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataDriver;
+use App\Models\DataMobilDinas;
 use App\Models\DataSppd;
 use App\Models\Role;
 use App\Models\Users;
@@ -486,13 +487,54 @@ class Dashboard extends Controller
 
     public function doSubmitMobilDinas(Request $request)
     {
-        dd($request);
+        try {
+            $tanggalMulai = \DateTime::createFromFormat('d-m-Y', $request->tanggalMulai)->format('Y-m-d');
+            $tanggalSelesai = \DateTime::createFromFormat('d-m-Y', $request->tanggalSelesai)->format('Y-m-d');
+
+            DataMobilDinas::create([
+                'uuid' => Str::uuid(),
+                'user_uuid' => session('uuid'),
+                'nama' => $request->nama,
+                'nip' => $request->nip,
+                'maksud' => $request->maksud,
+                'tujuan_provinsi' => $request->province_name,
+                'tujuan_kota' => $request->tujuanKota,
+                'tanggal_mulai' => $tanggalMulai,
+                'tanggal_selesai' => $tanggalSelesai
+            ]);
+
+            return redirect()
+                ->route('dashboard.statusMobilDinas')
+                ->with('success', 'Permohonan mobil dinas berhasil dimasukkan!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function statusMobilDinas()
     {
+        $dataMobilDinas = DataMobilDinas::where('data_mobil_dinas.user_uuid', session('uuid'))
+            ->join('data_driver', 'data_driver.uuid', '=', 'data_mobil_dinas.driver_uuid')
+            ->select(
+                'data_mobil_dinas.uuid',
+                'data_mobil_dinas.user_uuid',
+                'data_mobil_dinas.tujuan_kota',
+                'data_mobil_dinas.tujuan_provinsi',
+                'data_mobil_dinas.tanggal_mulai',
+                'data_mobil_dinas.tanggal_selesai',
+                'data_mobil_dinas.maksud',
+                'data_mobil_dinas.status_konfirmasi',
+                'data_driver.nama',
+                'data_driver.plat_mobil',
+            )
+            ->get();
+
         return view('statusMobilDinas', [
-            'title' => 'Status Mobil Dinas'
+            'title' => 'Status Mobil Dinas',
+            'dataMobilDinas' => $dataMobilDinas
         ]);
     }
 

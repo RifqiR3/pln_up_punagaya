@@ -36,16 +36,51 @@
             <table class="table table-striped" id="table1">
               <thead>
                 <tr>
+                  <th>No.</th>
                   <th>Tujuan</th>
                   <th>Tanggal</th>
                   <th>Maksud Perjalanan</th>
                   <th>Driver</th>
                   <th>Plat Mobil</th>
                   <th>Disetujui</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                
+                @php
+                    $nomor = 1;
+                @endphp
+                @foreach ($dataMobilDinas as $mobilDinas)
+                    <tr>
+                      <td>{{ $nomor }}</td>
+                      <td>{{ $mobilDinas->tujuan_kota}}, <br>{{ $mobilDinas->tujuan_provinsi}}</td>
+                      <td>
+                        {{ \Carbon\Carbon::parse($mobilDinas->tanggal_mulai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($mobilDinas->tanggal_mulai)->format('d-m-Y') }}
+                        <br>
+                        {{ \Carbon\Carbon::parse($mobilDinas->tanggal_selesai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($mobilDinas->tanggal_selesai)->format('d-m-Y') }}
+                      </td>
+                      <td>
+                        {{ $mobilDinas->maksud}}
+                      </td>
+                      <td>
+                        {{ $mobilDinas->nama}}
+                      </td>
+                      <td>
+                        {{ $mobilDinas->plat_mobil}}
+                      </td>
+                      @if ($mobilDinas->status_konfirmasi === 0)
+                        <td>Belum Ditentukan</td>
+                        <td><span class="badge bg-secondary">Menunggu Konfirmasi</span></td>
+                      @else
+                        <td>{{ $mobilDinas->nama}}, {{ $mobilDinas->plat_mobil}}</td>
+                        <td><span class="badge bg-success">Diterima</span></td>
+                      @endif
+
+                    </tr>
+                @php
+                    $nomor++;
+                @endphp
+                @endforeach
               </tbody>
             </table>
           </div>

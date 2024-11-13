@@ -68,7 +68,7 @@
                           <label for="email-id-icon">NIP</label>
                           <div class="position-relative">
                             <input
-                              type="number"
+                              type="text"
                               name="nip"
                               class="form-control"
                               placeholder="NIP..."

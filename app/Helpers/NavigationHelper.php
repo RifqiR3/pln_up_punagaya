@@ -79,7 +79,7 @@ class NavigationHelper
                 'icon' => 'bi bi-check-circle',
                 'route' => 'dashboard.konfirmasiMobilDinas',
                 'type' => 'item',
-                'roleMenu' => ['superadmin', 'Asisten Manager']
+                'roleMenu' => ['Asisten Manager']
             ],
             [
                 'title' => 'Manage Driver',

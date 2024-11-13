@@ -39,13 +39,13 @@ class Dashboard extends Controller
         try {
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
-                'nip' => 'required|numeric|digits_between:5,20',
+                'nip' => 'required|string|max:255',
                 'maksud' => 'required|string|max:500',
                 'province_name' => 'required|string',
                 'tujuanKota' => 'required|string',
                 'tanggalMulai' => 'required|date_format:d-m-Y',
                 'tanggalSelesai' => 'required|date_format:d-m-Y|after_or_equal:tanggalMulai',
-                'suratUndangan' => 'required|file|mimes:pdf,doc,docx|max:5120', // 5MB max
+                'suratUndangan' => 'required|file|mimes:pdf,doc,docx|max:5120',
             ]);
 
             $undanganPath = null;
@@ -500,7 +500,8 @@ class Dashboard extends Controller
                 'tujuan_provinsi' => $request->province_name,
                 'tujuan_kota' => $request->tujuanKota,
                 'tanggal_mulai' => $tanggalMulai,
-                'tanggal_selesai' => $tanggalSelesai
+                'tanggal_selesai' => $tanggalSelesai,
+                'driver_uuid' => '0001'
             ]);
 
             return redirect()

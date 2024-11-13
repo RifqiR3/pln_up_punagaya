@@ -540,9 +540,49 @@ class Dashboard extends Controller
 
     public function konfirmasiMobilDinas()
     {
+        $dataMobilDinas = DataMobilDinas::where('status_konfirmasi', '=', '0')->get();
+        $dataDriver = DataDriver::where('uuid', '!=', '0001')->get();
+
         return view('konfirmasiMobilDinas', [
-            'title' => 'Konfirmasi Mobil Dinas'
+            'title' => 'Konfirmasi Mobil Dinas',
+            'dataMobilDinas' => $dataMobilDinas,
+            'dataDriver' => $dataDriver
         ]);
+    }
+
+    public function doKonfirmasiMobilDinas(Request $request)
+    {
+        try {
+
+            $mobilDinasId = $request->input('mobil_dinas_id');
+            $dataMobilDinas = DataMobilDinas::where('uuid', $mobilDinasId)->firstOrFail();
+
+            $driverId = $request->input('driver');
+            $action = $request->input('action');
+
+            if ($action === 'terima') {
+                $message = 'Berhasil menerima permintaan mobil dinas';
+                $dataMobilDinas->driver_uuid = $driverId;
+                $dataMobilDinas->status_konfirmasi = 2;
+            } else if ($action === 'tolak') {
+                $message = 'Berhasil menolak permintaan mobil dinas';
+                $dataMobilDinas->status_konfirmasi = 3;
+            } else {
+                throw new \Exception('Action tidak valid');
+            }
+
+            $dataMobilDinas->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $message
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function manageDriver()

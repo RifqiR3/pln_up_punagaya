@@ -48,7 +48,50 @@
                           </tr>
                       </thead>
                       <tbody>
-                        
+                        @foreach ($dataMobilDinas as $mobilDinas)
+                        <tr>
+                              <td>{{ $mobilDinas->nama }}</td>
+                              <td>{{ $mobilDinas->nip }}</td>
+                              <td>{{ $mobilDinas->maksud }}</td>
+                              <td>{{ $mobilDinas->tujuan_kota }}, <br>{{ $mobilDinas->tujuan_provinsi }}</td>
+                              <td>
+                                  {{ \Carbon\Carbon::parse($mobilDinas->tanggal_mulai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($mobilDinas->tanggal_mulai)->format('d-m-Y') }}
+                                  <br>
+                                  {{ \Carbon\Carbon::parse($mobilDinas->tanggal_selesai)->locale('id')->dayName }}, {{ \Carbon\Carbon::parse($mobilDinas->tanggal_selesai)->format('d-m-Y') }}
+                              </td>
+                              <td>
+                                  <select required class="form-select" aria-label="Default select example" name="driver" onchange="driverChange(this)">
+                                      <option selected data-plat="Pilih Driver">Pilih Driver</option>
+                                      @foreach ($dataDriver as $driver)
+                                          <option value="{{ $driver->uuid }}" data-plat="{{ $driver->plat_mobil }}">{{ $driver->nama }}</option>
+                                      @endforeach
+                                  </select>
+                              </td>
+                              <td>
+                                  <span class="showPlat">Pilih Driver</span>
+                              </td>
+                              <td>
+                                <div class="d-flex">
+                                  <button
+                                    type="submit"
+                                    class="btn btn-success me-1 mb-1"
+                                    title="Terima"
+                                    onclick="submitForm(this, 'terima', '{{$mobilDinas->uuid}}')"
+                                  >
+                                    <i class="bi bi-check2-circle"></i>
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    class="btn btn-danger me-1 mb-1"
+                                    title="Tolak"
+                                    onclick="submitForm(this, 'tolak', '{{$mobilDinas->uuid}}')"
+                                  >
+                                    <i class="bi bi-x-circle"></i>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                        @endforeach
                       </tbody>
                   </table>
                 </div>
@@ -69,186 +112,71 @@
 
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+  function driverChange(element) {
+    const selectedOption = element.options[element.selectedIndex];
+    const platValue = selectedOption.dataset.plat;
+    console.log(selectedOption.dataset.plat);
+
+    const row = element.closest('tr');
+    const platDisplay = row.querySelector('.showPlat');
+    
+    if (platDisplay) {
+       platDisplay.innerHTML = platValue;
+    }
+  }
+
+  function submitForm(button, action, mobilDinasId){
+    const row = button.closest('tr');
+    const driverSelect = row.querySelector('select[name="driver"]');
+
+    if (driverSelect.value === "Pilih Driver" && action === "terima") {
+      alert("Silakan pilih driver terlebih dahulu");
+      return;
+    }
+
+    const buttons = row.querySelectorAll('button');
+    buttons.forEach(btn => btn.disabled = true);
+
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    document.querySelectorAll('.btn-terima').forEach(button => {
-      button.addEventListener('click', function(){
-        const row = this.closest('tr');
-        const data = {
-          uuid: row.dataset.uuid,
-        }
+    const formData = {
+      mobil_dinas_id: mobilDinasId,
+      driver: driverSelect.value,
+      action: action
+    };
 
+    fetch('{{ route("dashboard.doKonfirmasiMobilDinas") }}', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': csrfToken,
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
         Swal.fire({
-          title: 'Tunggu!',
-          icon: 'question',
-          text: 'Anda yakin akan menyetujui SPPD ini?',
-          allowOutsideClick: false,
-          showCancelButton: true,
-          confirmButtonColor: "#198754",
-          confirmButtonText: 'Konfirmasi',
-          cancelButtonText: 'Batal',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire({
-              title: 'Memproses...',
-              text: 'Mohon tunggu sebentar',
-              allowOutsideClick: false,
-              showConfirmButton: false,
-              willOpen: () => {
-                Swal.showLoading();
-              }
-            });
-
-            fetch('/dashboard/doKonfirmSppd', { 
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                uuid: data.uuid,
-              })
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              const contentType = response.headers.get('content-type');
-              if (!contentType || !contentType.includes('application/json')) {
-                throw new TypeError("Response was not JSON");
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (data.success) {
-                return Swal.fire({
-                  icon: 'success',
-                  title: 'Berhasil',
-                  showConfirmButton: true,
-                  allowOutsideClick: false,
-                  text: `${data.message}`
-                }).then((result) => {
-                  window.location.reload();
-                });
-              } else {
-                return Swal.fire({
-                  icon: 'error',
-                  title: 'ERROR!',
-                  text: data.message,
-                  showConfirmButton: true,
-                  showCancelButton: false,
-                  allowOutsideClick: false
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.reload();
-                  }
-                });
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              Swal.fire({
-                icon: 'error',
-                title: 'ERROR!',
-                text: 'Terjadi kesalahan pada server. Silahkan coba lagi.'
-              });
-            });
-          }
-        });
-      });
-    });
-
-    document.querySelectorAll('.btn-tolak').forEach(button => {
-      button.addEventListener('click', function(){
-        const row = this.closest('tr');
-        const data = {
-          uuid: row.dataset.uuid,
-          nama: row.dataset.nama
-        }
-        
-        Swal.fire({
-          title: 'Tunggu!',
-          icon: 'question',
-          text: 'Anda yakin akan menolak SPPD ini?',
-          allowOutsideClick: false,
-          showCancelButton: true,
-          confirmButtonColor: "#dc3545",
-          confirmButtonText: 'Tolak',
-          cancelButtonText: 'Batal',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            Swal.fire({
-              title: 'Memproses...',
-              text: 'Mohon tunggu sebentar',
-              allowOutsideClick: false,
-              showConfirmButton: false,
-              willOpen: () => {
-                Swal.showLoading();
-              }
-            })
-
-            fetch('/dashboard/doTolakSppd', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-              },
-              body: JSON.stringify({
-                uuid: data.uuid,
-                nama: data.nama
-              })
-            })
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              const contentType = response.headers.get('content-type');
-              if (!contentType || !contentType.includes('application/json')) {
-                throw new TypeError("Response was not JSON");
-              }
-              return response.json();
-            })
-            .then(data => {
-              if (data.success) {
-                return Swal.fire({
-                  icon: 'success',
-                  title: 'Berhasil',
-                  showConfirmButton: true,
-                  allowOutsideClick: false,
-                  text: `${data.message}`
-                }).then((result) => {
-                  window.location.reload();
-                });
-              } else {
-                return Swal.fire({
-                  icon: 'error',
-                  title: 'ERROR!',
-                  text: data.message,
-                  showConfirmButton: true,
-                  showCancelButton: false,
-                  allowOutsideClick: false
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.reload();
-                  }
-                });
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              Swal.fire({
-                icon: 'error',
-                title: 'ERROR!',
-                text: 'Terjadi kesalahan pada server. Silahkan coba lagi.'
-              });
-            });
-          }
+          icon: 'success',
+          title: 'Berhasil!',
+          text: data.message
+        }).then(() => {
+          window.location.reload();
         })
-      });
-    });
-
-});
+      } else {
+        throw new Error(data.message || 'Terjadi Kesalahan')
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR',
+        text: error.message
+      })
+    })
+    .finally(() => {
+      buttons.forEach(btn => btn.disabled = false);
+    })
+  } 
 </script>

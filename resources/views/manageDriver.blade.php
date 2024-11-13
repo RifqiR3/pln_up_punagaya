@@ -51,14 +51,17 @@
                             $nomor = 1;
                             @endphp
                             @foreach ($dataDriver as $drivers)
-                            <tr>
-                                <td> {{ $nomor }} </td>
-                                <td> {{ $drivers->nama }} </td>
-                                <td> {{ $drivers->plat_mobil }} </td>
-                            </tr>
-                            @php
-                            $nomor++;
-                            @endphp
+                              @if ($drivers->nama === "Belum Ditentukan")
+                                @continue
+                              @endif
+                              <tr>
+                                  <td> {{ $nomor }} </td>
+                                  <td> {{ $drivers->nama }} </td>
+                                  <td> {{ $drivers->plat_mobil }} </td>
+                              </tr>
+                              @php
+                              $nomor++;
+                              @endphp
                             @endforeach
                         </tbody>
                     </table>

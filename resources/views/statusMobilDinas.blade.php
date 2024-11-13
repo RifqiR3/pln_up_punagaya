@@ -71,6 +71,9 @@
                       @if ($mobilDinas->status_konfirmasi === 0)
                         <td>Belum Ditentukan</td>
                         <td><span class="badge bg-secondary">Menunggu Konfirmasi</span></td>
+                      @elseif($mobilDinas->status_konfirmasi === 3)
+                        <td>-</td>
+                        <td><span class="badge bg-danger">Ditolak</span></td>
                       @else
                         <td>{{ $mobilDinas->nama}}, {{ $mobilDinas->plat_mobil}}</td>
                         <td><span class="badge bg-success">Diterima</span></td>

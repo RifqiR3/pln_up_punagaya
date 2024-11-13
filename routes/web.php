@@ -40,4 +40,5 @@ Route::prefix('/dashboard')->name('dashboard.')->middleware('is.user')->group(fu
     Route::get('/manageDriver', [Dashboard::class, 'manageDriver'])->name('manageDriver');
     Route::post('/doKonfirmasiDriver', [Dashboard::class, 'doKonfirmasiDriver'])->name('doKonfirmasiDriver');
     Route::post('/doSubmitMobilDinas', [Dashboard::class, 'doSubmitMobilDinas'])->name('doSubmitMobilDinas');
+    Route::post('/doKonfirmasiMobilDinas', [Dashboard::class, 'doKonfirmasiMobilDinas'])->name('doKonfirmasiMobilDinas');
 });

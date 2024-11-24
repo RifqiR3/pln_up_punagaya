@@ -44,6 +44,7 @@
                                 <th>No.</th>
                                 <th>Nama</th>
                                 <th>Plat Mobil</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,10 +55,15 @@
                               @if ($drivers->nama === "Belum Ditentukan")
                                 @continue
                               @endif
-                              <tr>
+                              <tr data-uuid="{{ $drivers->uuid }}" data-nama="{{ $drivers->nama }}">
                                   <td> {{ $nomor }} </td>
                                   <td> {{ $drivers->nama }} </td>
                                   <td> {{ $drivers->plat_mobil }} </td>
+                                  <td>
+                                    <button class="btn btn-danger btn-hapus">
+                                      <i class="bi bi-trash"></i>
+                                    </button>
+                                  </td>
                               </tr>
                               @php
                               $nomor++;
@@ -171,5 +177,94 @@
                 })
             })
         });
+
+        document.querySelectorAll('.btn-hapus').forEach(button => {
+          button.addEventListener('click', function(){
+              const row = this.closest('tr');
+              const data = {
+                uuid: row.dataset.uuid,
+                nama: row.dataset.nama
+              }
+              
+              Swal.fire({
+                title: 'Tunggu!',
+                icon: 'question',
+                html: `Anda yakin akan menghapus driver: <strong>${data.nama}</strong>`,
+                allowOutsideClick: false,
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire({
+                    title: 'Memproses...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                      Swal.showLoading();
+                    }
+                  })
+
+                  fetch('/dashboard/doHapusDriver', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-TOKEN': csrfToken,
+                      'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      uuid: data.uuid
+                    })
+                  })
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                      throw new TypeError('Response was not JSON');
+                    }
+                    return response.json();
+                  })
+                  .then(data => {
+                    if (data.success) {
+                      return Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        showConfirmButton: true,
+                        allowOutsideClick: false,
+                        text: `${data.message}`
+                      }).then((result) => {
+                        window.location.reload();
+                      });
+                    } else {
+                      return Swal.fire({
+                        icon: 'error',
+                        title: 'ERROR!',
+                        text: data.message,
+                        showConfirmButton: true,
+                        showCancelButton: false,
+                        allowOutsideClick: false
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.reload();
+                        }
+                      })
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'ERROR!',
+                      text: 'Terjadi kesalahan pada server. Silahkan coba lagi.'
+                    })
+                  })
+                }
+              })
+            });
+          });
     });
   </script>

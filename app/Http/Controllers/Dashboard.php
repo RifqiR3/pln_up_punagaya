@@ -616,6 +616,23 @@ class Dashboard extends Controller
         }
     }
 
+    public function doHapusDriver(Request $request)
+    {
+        try {
+            DataDriver::where('uuid', $request->uuid)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data driver berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e
+            ]);
+        }
+    }
+
     // --------------------------------------------- End Mobil Dinas ---------------------------------------------
 
 

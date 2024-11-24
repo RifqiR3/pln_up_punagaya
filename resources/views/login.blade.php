@@ -25,7 +25,7 @@
           <div id="auth-left">
             <div class="auth-logo">
               <a href="#"
-                ><img class="w-100 h-100" src="{{ url('/image/punagaya.png') }}" alt="Logo"
+                ><img class="w-100 h-100" src="{{ url('image/punagaya.png') }}" alt="Logo"
               /></a>
             </div>
             <h1 class="auth-title">Log in.</h1>

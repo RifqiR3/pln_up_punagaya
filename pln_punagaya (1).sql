@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 13, 2024 at 04:50 PM
+-- Generation Time: Nov 13, 2024 at 04:52 PM
 -- Server version: 11.2.2-MariaDB-log
 -- PHP Version: 8.1.10
 
@@ -43,6 +43,51 @@ CREATE TABLE `cache_locks` (
   `key` varchar(255) NOT NULL,
   `owner` varchar(255) NOT NULL,
   `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data_driver`
+--
+
+CREATE TABLE `data_driver` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` char(36) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `plat_mobil` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `data_driver`
+--
+
+INSERT INTO `data_driver` (`id`, `uuid`, `nama`, `plat_mobil`, `created_at`, `updated_at`) VALUES
+(1, '0001', 'Belum Ditentukan', 'Belum Ditentukan', '2024-11-13 16:50:28', '2024-11-13 16:50:28');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `data_mobil_dinas`
+--
+
+CREATE TABLE `data_mobil_dinas` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` char(36) NOT NULL,
+  `user_uuid` char(36) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `nip` varchar(255) NOT NULL,
+  `maksud` text NOT NULL,
+  `tujuan_provinsi` varchar(255) NOT NULL,
+  `tujuan_kota` varchar(255) NOT NULL,
+  `tanggal_mulai` date NOT NULL,
+  `tanggal_selesai` date NOT NULL,
+  `driver_uuid` char(36) NOT NULL DEFAULT '0001',
+  `status_konfirmasi` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -259,6 +304,22 @@ ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
 --
+-- Indexes for table `data_driver`
+--
+ALTER TABLE `data_driver`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `data_driver_uuid_unique` (`uuid`);
+
+--
+-- Indexes for table `data_mobil_dinas`
+--
+ALTER TABLE `data_mobil_dinas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `data_mobil_dinas_uuid_unique` (`uuid`),
+  ADD KEY `data_mobil_dinas_user_uuid_foreign` (`user_uuid`),
+  ADD KEY `data_mobil_dinas_driver_uuid_foreign` (`driver_uuid`);
+
+--
 -- Indexes for table `data_role`
 --
 ALTER TABLE `data_role`
@@ -332,6 +393,18 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `data_driver`
+--
+ALTER TABLE `data_driver`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `data_mobil_dinas`
+--
+ALTER TABLE `data_mobil_dinas`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `data_role`
 --
 ALTER TABLE `data_role`
@@ -376,6 +449,13 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `data_mobil_dinas`
+--
+ALTER TABLE `data_mobil_dinas`
+  ADD CONSTRAINT `data_mobil_dinas_driver_uuid_foreign` FOREIGN KEY (`driver_uuid`) REFERENCES `data_driver` (`uuid`) ON DELETE CASCADE,
+  ADD CONSTRAINT `data_mobil_dinas_user_uuid_foreign` FOREIGN KEY (`user_uuid`) REFERENCES `data_user` (`uuid`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `data_sppd`
